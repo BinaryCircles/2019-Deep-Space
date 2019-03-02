@@ -136,7 +136,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     Scheduler.getInstance().run();
-    //m_autoturncomm.start();
+    m_autoturncomm.start();
   }
 
   @Override
@@ -156,16 +156,16 @@ public class Robot extends TimedRobot {
     //m_autoturncomm.cancel();
     Scheduler.getInstance().run();
     m_drivecomm.start();
-    //  m_viscomm.start();
+    m_viscomm.start();
 
-    // m_intakecomm.start();
+    m_intakecomm.start();
 
-    // if (m_oi.contr.getYButtonPressed()) {
-    // //  m_pncomm.execute();
-    // }
+    if (m_oi.contr.getYButtonPressed()) {
+     m_pncomm.execute();
+    }
 
     if (m_oi.contr.getPOV() == 0) {
-      m_drivesub.invertDirection();
+      // m_drivesub.invertDirection();
     }
 
     if (m_oi.contr.getPOV() == 180) {
@@ -173,7 +173,7 @@ public class Robot extends TimedRobot {
     }
 
     m_armcomm.start();
-    
+    //imagine hakerman
   }
 
   /**

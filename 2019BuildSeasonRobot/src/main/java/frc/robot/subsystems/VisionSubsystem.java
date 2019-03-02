@@ -37,7 +37,7 @@ public class VisionSubsystem extends Subsystem {
   private double centerX = 0.0;
   public int IMG_WIDTH = 320;
   public int IMG_HEIGHT = 240;
-  public CvSource cvOutput; 
+  // public CvSource cvOutput; 
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
@@ -46,23 +46,23 @@ public class VisionSubsystem extends Subsystem {
 
   public VisionSubsystem() {
       
-  //   UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
-  //   cvOutput = CameraServer.getInstance().putVideo("processed video", IMG_WIDTH, IMG_HEIGHT);
-  //   camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
-  //   camera.setFPS(25);
+  UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+  // cvOutput = CameraServer.getInstance().putVideo("processed video", IMG_WIDTH, IMG_HEIGHT);
+  camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
+  camera.setFPS(25);
     
-  //   visionThread = new VisionThread(camera, pipe, pipeline -> {
-  //     if (!pipeline.filterContoursOutput().isEmpty()) {
-  //         Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
-  //         synchronized (imgLock) {
-  //             centerX = r.x + (r.width / 2);
+    visionThread = new VisionThread(camera, pipe, pipeline -> {
+      if (!pipeline.filterContoursOutput().isEmpty()) {
+          Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
+          synchronized (imgLock) {
+              centerX = r.x + (r.width / 2);
               
-  //         }
-  //     }
-  //   });
+          }
+      }
+    });
     
-  // visionThread.setDaemon(true);
-  // visionThread.start();
+  visionThread.setDaemon(true);
+  visionThread.start();
   }
 
   

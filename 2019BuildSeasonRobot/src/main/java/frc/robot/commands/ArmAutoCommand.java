@@ -13,10 +13,10 @@ import frc.robot.Robot;
 /**
  * An example command.  You can replace me with your own command.
  */
-public class PneumaticsCommand extends Command {
-  public PneumaticsCommand() {
+public class ArmAutoCommand extends Command {
+  public ArmAutoCommand() {
     // Use requires() here to declare subsystem dependencies
-    requires(Robot.m_pnsub);
+    requires(Robot.m_armsubsystem);
   }
 
   // Called just before this Command runs the first time
@@ -26,8 +26,8 @@ public class PneumaticsCommand extends Command {
 
   // Called repeatedly when this Command is scheduled to run
   @Override
-  public void execute() {
-    Robot.m_pnsub.toggleArm();
+  protected void execute() {
+    
   }
 
   // Make this return true when this Command no longer needs to run execute()
