@@ -61,6 +61,11 @@ public class DriveSubsystem extends Subsystem {
     d_left.setInverted(inverted);
     d_right.setInverted(inverted);
 
+    talon_fl.configPeakOutputForward(1);
+    talon_fl.configPeakOutputReverse(-1);
+    talon_fr.configPeakOutputForward(1);
+    talon_fr.configPeakOutputReverse(-1);
+
     d_drive.setSafetyEnabled(false);
     // d_drive.setExpiration(0.75);
 

@@ -45,9 +45,15 @@ public class DriveCommand extends Command {
   }
 
   protected void curveExecute() {
-    Robot.m_drivesub.curvatureDrive(Robot.m_oi.getTriggerMagnitude(),
-    Robot.m_oi.getXMagnitudeOfLeftSide() * -1,
-    Robot.m_oi.contr.getXButton());
+    if (Robot.m_oi.getTriggerMagnitude() < 0) {
+      Robot.m_drivesub.curvatureDrive(Robot.m_oi.getTriggerMagnitude(),
+      Robot.m_oi.getXMagnitudeOfLeftSide() * -1,
+      Robot.m_oi.contr.getXButton());
+    } else {
+      Robot.m_drivesub.curvatureDrive(Robot.m_oi.getTriggerMagnitude(),
+      Robot.m_oi.getXMagnitudeOfLeftSide(),
+      Robot.m_oi.contr.getXButton());
+    }
 
     // Robot.m_drivesub.curvatureDrive(Math.sin(sineMovement),
     // 0.00, // set to 0 to disable pid, breaking in gearboxes

@@ -30,16 +30,26 @@ public class ArmSubsystem extends Subsystem{
   private WPI_VictorSPX armL = new WPI_VictorSPX(RobotMap.arm_victor);
 
   private SpeedControllerGroup arm = new SpeedControllerGroup(armR, armL);
-
-  private double kP = 0;
+  private int startingEncoderPos = 225 ;
+  /*private double kP = 0;
   private double kI;
   private double kD;
-  private double kF;
+  private double kF;*/
   public int kIzone;
   public double kPeakOutput;
   public boolean armToggle = false;
   private PowerDistributionPanel pdp = new PowerDistributionPanel();
-
+  @Override
+  public void periodic()
+  {   
+    SmartDashboard.putNumber("Arm Encoder position", armR.getSelectedSensorPosition() );
+  }
+  public ArmSubsystem()
+  {
+    super("Arm Subsystem");
+    
+//    armR.setSelectedSensorPosition(startingEncoderPos);
+  }
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
@@ -47,7 +57,6 @@ public class ArmSubsystem extends Subsystem{
     armR.setSafetyEnabled(false);
     armL.setInverted(false);
     armL.follow(armR);
-
     // armR.configVoltageCompSaturation(4);
     // armR.configPeakOutputForward(0.125); 
     //   // armR.configVoltageCompSaturation(0);
@@ -57,10 +66,10 @@ public class ArmSubsystem extends Subsystem{
     
   }
   public void setCruiseAndAcceleration(int accel, int cruise) {  
-    armR.config_kP(0, kP);
+    /*armR.config_kP(0, kP);
     armR.config_kI(0, kI);
     armR.config_kD(0, kD);
-    armR.config_kF(0, kF);
+    armR.config_kF(0, kF);*/
     armR.configMotionAcceleration(accel);
     armR.configMotionCruiseVelocity(cruise);
   }
@@ -75,12 +84,12 @@ public class ArmSubsystem extends Subsystem{
     armToggle = !armToggle;
   }*/
 
-  public void armUp(double turnPosition) {
-    armR.set(ControlMode.MotionMagic, turnPosition);
+  public void setArmPos(double turnPosition) {
+    armR.set(ControlMode.Position, turnPosition);
   }
 
-  public void armReset() {
-    armR.set(ControlMode.MotionMagic, 0);
+  public void resetArmSensorPosition() {
+    armR.setSelectedSensorPosition(0);
   }
     // imagine hackeman//
   public void turnArm() {

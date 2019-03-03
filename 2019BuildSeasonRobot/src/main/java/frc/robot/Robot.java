@@ -158,11 +158,11 @@ public class Robot extends TimedRobot {
     m_drivecomm.start();
     //  m_viscomm.start();
 
-    // m_intakecomm.start();
+    m_intakecomm.start();
 
-    // if (m_oi.contr.getYButtonPressed()) {
-    // //  m_pncomm.execute();
-    // }
+    if (m_oi.contr.getYButtonPressed()) {
+      m_pncomm.execute();
+    }
 
     if (m_oi.contr.getPOV() == 0) {
       m_drivesub.invertDirection();
