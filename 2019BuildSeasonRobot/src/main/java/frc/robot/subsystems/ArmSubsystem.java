@@ -91,9 +91,11 @@ public class ArmSubsystem extends Subsystem
   public void setArmPos(double setpoint) {
     armR.set(ControlMode.Position, setpoint, DemandType.ArbitraryFeedForward, kf_lin * Math.cos(Math.toRadians(getPosition())));
   }
-
+  public void setArmPos(double setpoint) {
+    armR.set(ControlMode.Position, setpoint, DemandType.ArbitraryFeedForward, kf_lin * Math.cos(Math.toRadians(getPosition())));
+  }
   public void armReset() {
-    armR.set(ControlMode.MotionMagic, 0);
+    armR.set(ControlMode.Position, 0);
   }
     // imagine hackeman//
   public void rawTurnArm(double power) {
