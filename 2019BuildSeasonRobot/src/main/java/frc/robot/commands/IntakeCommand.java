@@ -8,6 +8,8 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.JoystickBase;
 import frc.robot.Robot;
 
 /**
@@ -27,9 +29,9 @@ public class IntakeCommand extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    if (Robot.m_oi.contr.getAButton()) {
+    if (Robot.m_oi.joystick.getTopPressed()) {
       Robot.m_intakesub.succ();
-    } else if (Robot.m_oi.contr.getBButton()) {
+    } else if (Robot.m_oi.joystick.getTriggerPressed()) {
       Robot.m_intakesub.spit();
     } else {
       Robot.m_intakesub.atRest();
