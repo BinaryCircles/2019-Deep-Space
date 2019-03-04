@@ -50,7 +50,7 @@ public class Robot extends TimedRobot {
   public static DriveSubsystem m_drivesub = new DriveSubsystem();
   public static DriveCommand m_drivecomm = new DriveCommand();
 
-  public static ArmSubsystem m_armsubsystem = new ArmSubsystem();
+  public static ArmSubsystem m_armsubsystem = ArmSubsystem.getInstance();
   public static ArmCommand m_armcomm = new ArmCommand();
 
   public static AutoDriveCommand m_autodrivecomm = new AutoDriveCommand();

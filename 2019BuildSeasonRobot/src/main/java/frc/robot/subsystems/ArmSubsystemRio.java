@@ -67,8 +67,8 @@ public class ArmSubsystem extends Subsystem
  
 
 
-  public void setArmPos(double setpoint) {
-    
+  public void setArmPos(int setpoint) {
+    armR.set(ControlMode.Position, setpoint );
   }
     // imagine hackeman//
   public void rawTurnArm(double power) {
