@@ -49,6 +49,7 @@ public class ArmSubsystemRio extends Subsystem
     kf_lin = 0.125;
     armR = new TalonSRX(RobotMap.arm_talon);
     armL = new VictorSPX(RobotMap.arm_victor);
+    armR.configSelectedFeedbackDevice(FeedbackDevice.QuadEncoder);
     armR.setSafetyEnabled(false);
     armL.setSafetyEnabled(false);
     armL.setInverted(false);
