@@ -19,16 +19,17 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 //import com.ctre.phoenix.motorcontrol.can;    
 
 /**
  * Arm subsystem
  */
-public class ArmSubsystemRio extends Subsystem 
+public class ArmSubsystem extends Subsystem 
   {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
-  private static ArmSubsystemRio armSub = new ArmSubsystemRio();
+  private static ArmSubsystem armSub = new ArmSubsystem();
   private static TalonSRX armR; 
   private static VictorSPX armL;
   // PID constants
@@ -38,7 +39,7 @@ public class ArmSubsystemRio extends Subsystem
   //Linearizing feedforward constant;
   private static double kF_lin;
   //Default constructor
-  public ArmSubsystemRio()
+  public ArmSubsystem()
   {
     super("Arm Subsystem");
     armR  = new TalonSRX(RobotMap.arm_talon);
@@ -56,7 +57,7 @@ public class ArmSubsystemRio extends Subsystem
     armR.configPeakOutputForward(1); 
     armL.configPeakOutputForward(1);
   }
-  public static ArmSubsystemRio getInstance()
+  public static ArmSubsystem getInstance()
   {
     return armSub;
   }
