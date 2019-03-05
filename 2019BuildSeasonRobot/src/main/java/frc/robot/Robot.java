@@ -55,7 +55,6 @@ public class Robot extends TimedRobot {
 
   public static AutoDriveCommand m_autodrivecomm = new AutoDriveCommand();
   public static AutoTurnCommandMP m_autoturncomm = new AutoTurnCommandMP(1, .1);
-
   public static OI m_oi;
 
   Command m_autonomousCommand;

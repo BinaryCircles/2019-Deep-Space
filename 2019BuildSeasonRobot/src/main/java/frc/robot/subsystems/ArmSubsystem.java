@@ -14,21 +14,20 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import com.ctre.phoenix.*;
-import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-import com.ctre.phoenix.motorcontrol.DemandType;
 //import com.ctre.phoenix.motorcontrol.can;    
 
 /**
  * Arm subsystem
  */
-public class ArmSubsystemRio extends Subsystem 
+public class ArmSubsystem extends Subsystem 
   {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
-  private static ArmSubsystemRio armSub = new ArmSubsystemRio();
+  private static ArmSubsystem armSub = new ArmSubsystem();
   private static TalonSRX armR; 
   private static VictorSPX armL;
   // PID constants
@@ -38,7 +37,7 @@ public class ArmSubsystemRio extends Subsystem
   //Linearizing feedforward constant;
   private static double kF_lin;
   //Default constructor
-  public ArmSubsystemRio()
+  public ArmSubsystem()
   {
     super("Arm Subsystem");
     armR  = new TalonSRX(RobotMap.arm_talon);
@@ -46,18 +45,16 @@ public class ArmSubsystemRio extends Subsystem
     kP = 0.0;
     kI = 0.0;
     kD = 0.0;
-    kf_lin = 0.125;
+    kF_lin = 0.125;
     armR = new TalonSRX(RobotMap.arm_talon);
     armL = new VictorSPX(RobotMap.arm_victor);
-    armR.configSelectedFeedbackDevice(FeedbackDevice.QuadEncoder);
-    armR.setSafetyEnabled(false);
-    armL.setSafetyEnabled(false);
+    armR.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
     armL.setInverted(false);
     armL.follow(armR);
     armR.configPeakOutputForward(1); 
     armL.configPeakOutputForward(1);
   }
-  public static ArmSubsystemRio getInstance()
+  public static ArmSubsystem getInstance()
   {
     return armSub;
   }
@@ -68,11 +65,11 @@ public class ArmSubsystemRio extends Subsystem
 
 
   public void setArmPos(double setpoint) {
-    
+    armR.set(ControlMode.Position, setpoint,  DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));
   }
     // imagine hackeman//
   public void rawTurnArm(double power) {
-    armR.set(power);
+    armR.set(ControlMode.PercentOutput, power, DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));
   }
   @Override
   public void periodic()

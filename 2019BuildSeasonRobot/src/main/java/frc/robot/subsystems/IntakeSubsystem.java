@@ -20,7 +20,6 @@ public class IntakeSubsystem extends Subsystem {
 
   public WPI_VictorSPX intake_t = new WPI_VictorSPX(RobotMap.intake_t); // top row
   public WPI_VictorSPX intake_b = new WPI_VictorSPX(RobotMap.intake_b); // bottom row
-
   public void succ() {
     intake_t.set(0.7);
     intake_b.set(-0.7);

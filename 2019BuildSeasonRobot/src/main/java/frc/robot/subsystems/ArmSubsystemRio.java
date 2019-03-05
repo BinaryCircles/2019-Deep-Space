@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
+
 import com.ctre.phoenix.*;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -25,21 +26,24 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 /**
  * Arm subsystem
  */
-public class ArmSubsystem extends Subsystem 
+public class ArmSubsystemRio extends Subsystem 
   {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
-  private static ArmSubsystem armSub = new ArmSubsystem();
-  private static TalonSRX armR; 
-  private static VictorSPX armL;
-  // PID constants
-  private static double kP;
-  private static double kI;
-  private static double kD;
-  //Linearizing feedforward constant;
-  private static double kF_lin;
+  private SynchronousPIDF controller;
+  private static ArmSubsystemRio armSub = new ArmSubsystemRio();
+  private  TalonSRX armR; 
+  private  VictorSPX armL;
+  private Encoder currentPos;
+  private  double kP;
+  private  double kI;
+  private  double kD;
+  private int m_setpoint;
+  private int startingEncoderPosition;
+  //Linearizing feedforward constant
+  private double kF_lin;
   //Default constructor
-  public ArmSubsystem()
+  public ArmSubsystemRio()
   {
     super("Arm Subsystem");
     armR  = new TalonSRX(RobotMap.arm_talon);
@@ -47,17 +51,17 @@ public class ArmSubsystem extends Subsystem
     kP = 0.0;
     kI = 0.0;
     kD = 0.0;
-    kf_lin = 0.125;
+    kF_lin = 0.125;
     armR = new TalonSRX(RobotMap.arm_talon);
     armL = new VictorSPX(RobotMap.arm_victor);
-    armR.setSafetyEnabled(false);
-    armL.setSafetyEnabled(false);
     armL.setInverted(false);
     armL.follow(armR);
     armR.configPeakOutputForward(1); 
     armL.configPeakOutputForward(1);
+    currentPos = new Encoder(0, 1,false, Encoder.EncodingType.k4X );
+    controller = new SynchronousPIDF(kP, kI, kD);
   }
-  public static ArmSubsystem getInstance()
+  public static ArmSubsystemRio getInstance()
   {
     return armSub;
   }
@@ -66,18 +70,20 @@ public class ArmSubsystem extends Subsystem
   }
  
 
-
   public void setArmPos(int setpoint) {
-    armR.set(ControlMode.Position, setpoint );
+    m_setpoint = setpoint;
+    controller.setSetpoint((double) m_setpoint);
   }
     // imagine hackeman//
   public void rawTurnArm(double power) {
-    armR.set(power);
+    armR.set(ControlMode.PercentOutput, power, DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));
   }
   @Override
   public void periodic()
-  {}
+  {
+    armR.set(ControlMode.PercentOutput, controller.calculate(getPositionDegrees(), 20), DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));
+  }
   public double getPositionDegrees() {
-    return armR.getSelectedSensorPosition() * 360 / (4* 5 * 600);
+    return (currentPos.get() + startingEncoderPosition) * 360 / (4* 5 * 600);
   }
 }
