@@ -49,11 +49,15 @@ public class OI {
 
   public static XboxController contr = new XboxController(RobotMap.driveJoystickLeft);
   // public static XboxController drive = new XboxController(RobotMap.driveJoystickRight);
+  public static Joystick joystick = new Joystick(0);
   
   public static JoystickButton aButton = new JoystickButton(contr, 1);
   public static JoystickButton bButton = new JoystickButton(contr, 2);
   public static JoystickButton xButton = new JoystickButton(contr, 3);
   public static JoystickButton yButton = new JoystickButton(contr, 4);
+  public static JoystickButton jtrigger = new JoystickButton(joystick, 1);
+  public static JoystickButton jside = new JoystickButton(joystick, 2);
+
 
 
   // Return the magnitude (from -1 to 1) of the left stick's Y component.
@@ -62,16 +66,15 @@ public class OI {
     return Math.pow((-contr.getTriggerAxis(GenericHID.Hand.kRight)+contr.getTriggerAxis(GenericHID.Hand.kLeft)), 3);
   }
 
- 
 
   // Return the magnitude (from -1 to 1) of the right stick's Y component
 
   // Return the magnitude (from -1 to 1) of the right stick's X component.
   public double getYMagnitudeOfRightSide() {
-    return Math.pow(-contr.getY(GenericHID.Hand.kRight), 3);
+    return Math.pow(contr.getY(GenericHID.Hand.kRight), 3);
   }
   public double getXMagnitudeOfLeftSide() {
-    return Math.pow(contr.getX(GenericHID.Hand.kLeft), 3);
+    return Math.pow(contr.getX(GenericHID.Hand.kLeft), 5) * -1;
   }
   
 

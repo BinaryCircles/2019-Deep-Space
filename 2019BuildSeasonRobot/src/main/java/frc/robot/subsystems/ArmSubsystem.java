@@ -13,8 +13,11 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
+import frc.robot.commands.ArmCommand;
+
 import com.ctre.phoenix.*;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
@@ -25,7 +28,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 public class ArmSubsystem extends Subsystem{
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
-
+  
   private WPI_TalonSRX armR = new WPI_TalonSRX(RobotMap.arm_talon);
   private WPI_VictorSPX armL = new WPI_VictorSPX(RobotMap.arm_victor);
 
@@ -47,16 +50,16 @@ public class ArmSubsystem extends Subsystem{
   public ArmSubsystem()
   {
     super("Arm Subsystem");
-    
+    armR.setSafetyEnabled(false);
+    armL.setInverted(false);
+    armL.follow(armR); 
 //    armR.setSelectedSensorPosition(startingEncoderPos);
   }
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
-    // setDefaultCommand(new MySpecialCommand());
-    armR.setSafetyEnabled(false);
-    armL.setInverted(false);
-    armL.follow(armR);
+    
+    //setDefaultCommand(new ArmCommand());
     // armR.configVoltageCompSaturation(4);
     // armR.configPeakOutputForward(0.125); 
     //   // armR.configVoltageCompSaturation(0);
@@ -85,15 +88,16 @@ public class ArmSubsystem extends Subsystem{
   }*/
 
   public void setArmPos(double turnPosition) {
-    armR.set(ControlMode.Position, turnPosition);
+    armR.set(ControlMode.Position, turnPosition, DemandType.ArbitraryFeedForward, -0.125 * Math.cos(Math.toRadians(getArmPosInDegrees())) );
   }
 
   public void resetArmSensorPosition() {
-    armR.setSelectedSensorPosition(0);
+    //armR.setSelectedSensorPosition(0);
   }
     // imagine hackeman//
   public void turnArm() {
-    armR.set(Robot.m_oi.getYMagnitudeOfRightSide() * 0.25);
+    armR.set(Robot.m_oi.joystickY() * 0.25);
+    armR.set(Robot.m_oi.getYMagnitudeOfRightSide()*0.25);
     // armR.setSafetyEnabled(true);
     // armR.setExpiration(1);
     /*SmartDashboard.putNumber("motor output voltage", armR.getMotorOutputVoltage());    
@@ -109,7 +113,10 @@ public class ArmSubsystem extends Subsystem{
 
   }
 
-
+  public double getArmPosInDegrees()
+  {
+    return ((double) armR.getSelectedSensorPosition()) * 360.0 / (600.0 *5.0);
+  }
 
 
 

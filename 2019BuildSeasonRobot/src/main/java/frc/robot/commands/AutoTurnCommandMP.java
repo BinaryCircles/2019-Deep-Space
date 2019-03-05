@@ -25,7 +25,7 @@ public class AutoTurnCommandMP extends Command implements PIDSource, PIDOutput {
     private double target;
     private int stage;
     private double time;
-    public PIDController turnPID = new PIDController(0.0, 0.0, 0.0, this, this, 2665);
+    public PIDController turnPID = new PIDController(0.02, 0.0, 0.0, this, this, 2665);
     private AHRS ahrs = Robot.m_drivesub.ahrs;
     private double rate;
     private double velocityError;

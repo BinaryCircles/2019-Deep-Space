@@ -8,17 +8,15 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.JoystickBase;
 import frc.robot.Robot;
 
 /**
  * An example command.  You can replace me with your own command.
  */
-public class IntakeCommand extends Command {
-  public IntakeCommand() {
+public class ArmAutoCommand extends Command {
+  public ArmAutoCommand() {
     // Use requires() here to declare subsystem dependencies
-    requires(Robot.m_intakesub);
+    requires(Robot.m_armsubsystem);
   }
 
   // Called just before this Command runs the first time
@@ -29,13 +27,7 @@ public class IntakeCommand extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    if (Robot.m_oi.joystick.getTop()) {
-      Robot.m_intakesub.succ();
-    } else if (Robot.m_oi.joystick.getTrigger()) {
-      Robot.m_intakesub.spit();
-    } else {
-      Robot.m_intakesub.atRest();
-    }
+    
   }
 
   // Make this return true when this Command no longer needs to run execute()

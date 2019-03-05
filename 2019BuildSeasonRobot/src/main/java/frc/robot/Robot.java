@@ -53,7 +53,7 @@ public class Robot extends TimedRobot {
   public static ArmSubsystem m_armsubsystem = new ArmSubsystem();
   public static ArmCommand m_armcomm = new ArmCommand();
 
-  public static AutoDriveCommand m_autodrivecomm = new AutoDriveCommand();
+ // public static AutoDriveCommand m_autodrivecomm = new AutoDriveCommand();
   public static AutoTurnCommandMP m_autoturncomm = new AutoTurnCommandMP(1, .1);
 
   public static OI m_oi;
@@ -136,7 +136,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     Scheduler.getInstance().run();
-    //m_autoturncomm.start();
+    m_autoturncomm.start();
   }
 
   @Override
@@ -156,7 +156,7 @@ public class Robot extends TimedRobot {
     //m_autoturncomm.cancel();
     Scheduler.getInstance().run();
     m_drivecomm.start();
-    //  m_viscomm.start();
+    m_viscomm.start();
 
     m_intakecomm.start();
 
@@ -165,7 +165,7 @@ public class Robot extends TimedRobot {
     }
 
     if (m_oi.contr.getPOV() == 0) {
-      m_drivesub.invertDirection();
+      // m_drivesub.invertDirection();
     }
 
     if (m_oi.contr.getPOV() == 180) {
@@ -173,7 +173,7 @@ public class Robot extends TimedRobot {
     }
 
     m_armcomm.start();
-    
+    //imagine hakerman
   }
 
   /**
