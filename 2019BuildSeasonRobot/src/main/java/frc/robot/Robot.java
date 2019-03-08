@@ -20,7 +20,7 @@ import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.AutoDriveCommand;
 import frc.robot.commands.AutoTurnCommandMP;
-import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.subsystems.*;
 import frc.robot.commands.VisionCommand;
 import frc.robot.subsystems.PneumaticsSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -50,7 +50,7 @@ public class Robot extends TimedRobot {
   public static DriveSubsystem m_drivesub = new DriveSubsystem();
   public static DriveCommand m_drivecomm = new DriveCommand();
 
-  public static ArmSubsystem m_armsubsystem = ArmSubsystem.getInstance();
+  public static ArmSubsystemRio m_armsubsystem = ArmSubsystemRio.getInstance();
   public static ArmCommand m_armcomm = new ArmCommand();
 
   public static AutoDriveCommand m_autodrivecomm = new AutoDriveCommand();
@@ -126,7 +126,7 @@ public class Robot extends TimedRobot {
     // if (m_autonomousCommand != null) {
     //   m_autonomousCommand.start();
     // }
-
+    m_armsubsystem.resetEncoder();
   }
 
   /**
@@ -144,7 +144,7 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-    
+    //m_armsubsystem.resetEncoder();
   }
 
   /**

@@ -30,9 +30,9 @@ public class ArmCommand extends Command {
   @Override
   protected void execute() {
     if(Robot.m_oi.contr.getBumperPressed(GenericHID.Hand.kRight)) {
-      Robot.m_armsubsystem.setArmPos(20);
+      Robot.m_armsubsystem.setArmPos(45);
     } else if (Robot.m_oi.contr.getBumperPressed(GenericHID.Hand.kLeft)) {
-      Robot.m_armsubsystem.setArmPos(0);
+      Robot.m_armsubsystem.setArmPos(45);
     }
   }
 

@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 public class DriveCommand extends Command {
 
   private double sineMovement = 0; // set to 0 to start out (temp)
-  private double turnPower = 0;
+  private double turnCoefficient = 1;
 
   public DriveCommand() {
     // Use requires() here to declare subsystem dependencies
@@ -46,8 +46,15 @@ public class DriveCommand extends Command {
   }
 
   protected void curveExecute() {
+    if (Robot.m_oi.getTriggerMagnitude() < 0 && !Robot.m_oi.contr.getXButton()) {
+      // when reversing and not quickturning, reverse turn direction
+      turnCoefficient = -1;
+    } else {
+      turnCoefficient = 1;
+    }
+
     Robot.m_drivesub.curvatureDrive(Robot.m_oi.getTriggerMagnitude(),
-    Robot.m_oi.getXMagnitudeOfLeftSide(),
+    Robot.m_oi.getXMagnitudeOfLeftSide() * turnCoefficient, // turnCoefficient inverses turn direction when reversing
     Robot.m_oi.contr.getXButton());
 
     // Robot.m_drivesub.curvatureDrive(Math.sin(sineMovement),

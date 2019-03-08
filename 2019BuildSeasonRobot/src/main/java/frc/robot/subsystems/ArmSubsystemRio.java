@@ -38,8 +38,8 @@ public class ArmSubsystemRio extends Subsystem
   private  double kP;
   private  double kI;
   private  double kD;
-  private int m_setpoint;
-  private int startingEncoderPosition;
+  private double m_setpoint;
+  private double startingEncoderPosition;
   //Linearizing feedforward constant
   private double kF_lin;
   //Default constructor
@@ -48,18 +48,23 @@ public class ArmSubsystemRio extends Subsystem
     super("Arm Subsystem");
     armR  = new TalonSRX(RobotMap.arm_talon);
     armL = new VictorSPX(RobotMap.arm_victor);
-    kP = 0.0;
+    kP = 0.002;
     kI = 0.0;
     kD = 0.0;
-    kF_lin = 0.125;
+    kF_lin = 0.151;
+    armR.configPeakCurrentLimit(10);
+    armR.enableCurrentLimit(true);
     armR = new TalonSRX(RobotMap.arm_talon);
     armL = new VictorSPX(RobotMap.arm_victor);
-    armL.setInverted(false);
+    armR.setInverted(true);
     armL.follow(armR);
-    armR.configPeakOutputForward(1); 
-    armL.configPeakOutputForward(1);
-    currentPos = new Encoder(0, 1,false, Encoder.EncodingType.k4X );
-    controller = new SynchronousPIDF(kP, kI, kD);
+    armL.setInverted(true);
+    currentPos = new Encoder(0, 1, true, Encoder.EncodingType.k4X );
+    currentPos.reset();
+    controller = new SynchronousPIDF(kP, kI, kD, 0);
+    startingEncoderPosition = 118.0;
+    m_setpoint = 45;
+    controller.setOutputRange(-1, 1);
   }
   public static ArmSubsystemRio getInstance()
   {
@@ -68,11 +73,14 @@ public class ArmSubsystemRio extends Subsystem
   @Override
   public void initDefaultCommand() {
   }
- 
+  public void resetEncoder()
+  {
+    currentPos.reset();
+  }
 
   public void setArmPos(int setpoint) {
     m_setpoint = setpoint;
-    controller.setSetpoint((double) m_setpoint);
+    controller.setSetpoint((double) m_setpoint );
   }
     // imagine hackeman//
   public void rawTurnArm(double power) {
@@ -81,9 +89,13 @@ public class ArmSubsystemRio extends Subsystem
   @Override
   public void periodic()
   {
-    armR.set(ControlMode.PercentOutput, controller.calculate(getPositionDegrees(), 20), DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));
+    double pidOutput = controller.calculate(/*getPositionDegrees()*/ 47, 20);
+    //armR.set(ControlMode.PercentOutput, pidOutput, DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));
+    SmartDashboard.putNumber("Arm Output", getPositionDegrees());
+    SmartDashboard.putNumber("Arm pid Output", pidOutput );
+    SmartDashboard.putNumber("Arm setpoint", m_setpoint );
   }
   public double getPositionDegrees() {
-    return (currentPos.get() + startingEncoderPosition) * 360 / (4* 5 * 600);
+    return (( (double)currentPos.get() )* 360.0 / (4.0 * 256.0))+ startingEncoderPosition;
   }
 }

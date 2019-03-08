@@ -77,7 +77,6 @@ public class OI {
     return Math.pow(contr.getX(GenericHID.Hand.kLeft), 5) * -1;
   }
   
-
   // public double getZRotation() {
   //   return contr.getY(GenericHID.Hand.kL)
   // }
