@@ -23,101 +23,59 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 /**
- * An example subsystem.  You can replace me with your own Subsystem.
+ * Arm subsystem
  */
 public class ArmSubsystem extends Subsystem{
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
-  
-  private WPI_TalonSRX armR = new WPI_TalonSRX(RobotMap.arm_talon);
-  private WPI_VictorSPX armL = new WPI_VictorSPX(RobotMap.arm_victor);
-
-  private SpeedControllerGroup arm = new SpeedControllerGroup(armR, armL);
-  private int startingEncoderPos = 225 ;
-  /*private double kP = 0;
-  private double kI;
-  private double kD;
-  private double kF;*/
-  public int kIzone;
-  public double kPeakOutput;
-  public boolean armToggle = false;
-  private PowerDistributionPanel pdp = new PowerDistributionPanel();
-  @Override
-  public void periodic()
-  {   
-    SmartDashboard.putNumber("Arm Encoder position", armR.getSelectedSensorPosition() );
-  }
+  private static ArmSubsystem armSub = new ArmSubsystem();
+  private static TalonSRX armR; 
+  private static VictorSPX armL;
+  // PID constants
+  private static double kP;
+  private static double kI;
+  private static double kD;
+  //Linearizing feedforward constant;
+  private static double kF_lin;
+  //Default constructor
   public ArmSubsystem()
   {
     super("Arm Subsystem");
-    armR.setSafetyEnabled(false);
+    armR  = new TalonSRX(RobotMap.arm_talon);
+    armL = new VictorSPX(RobotMap.arm_victor);
+    kP = 0.0;
+    kI = 0.0;
+    kD = 0.0;
+    kF_lin = 0.125;
+    armR = new TalonSRX(RobotMap.arm_talon);
+    armL = new VictorSPX(RobotMap.arm_victor);
+    armR.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
     armL.setInverted(false);
-    armL.follow(armR); 
-//    armR.setSelectedSensorPosition(startingEncoderPos);
+    armL.follow(armR);
+    armR.configPeakOutputForward(1); 
+    armL.configPeakOutputForward(1);
+  }
+  public static ArmSubsystem getInstance()
+  {
+    return armSub;
   }
   @Override
   public void initDefaultCommand() {
-    // Set the default command for a subsystem here.
-    
-    //setDefaultCommand(new ArmCommand());
-    // armR.configVoltageCompSaturation(4);
-    // armR.configPeakOutputForward(0.125); 
-    //   // armR.configVoltageCompSaturation(0);
-    // // armL.configVoltageCompSaturation(4);
-    // armL.configPeakOutputForward(0.125);
-    // armL.set(0.125);
-    
   }
-  public void setCruiseAndAcceleration(int accel, int cruise) {  
-    /*armR.config_kP(0, kP);
-    armR.config_kI(0, kI);
-    armR.config_kD(0, kD);
-    armR.config_kF(0, kF);*/
-    armR.configMotionAcceleration(accel);
-    armR.configMotionCruiseVelocity(cruise);
-  }
+ 
 
-  /*public void toggleArm(double turnPosition) {
-    if (armToggle == true) {
-      armR.set(ControlMode.MotionMagic, turnPosition);
-    } else {
-      armR.set(ControlMode.MotionMagic, 0);
-    }
 
-    armToggle = !armToggle;
-  }*/
-
-  public void setArmPos(double turnPosition) {
-    armR.set(ControlMode.Position, turnPosition, DemandType.ArbitraryFeedForward, -0.125 * Math.cos(Math.toRadians(getArmPosInDegrees())) );
-  }
-
-  public void resetArmSensorPosition() {
-    //armR.setSelectedSensorPosition(0);
+  public void setArmPos(double setpoint) {
+    armR.set(ControlMode.Position, setpoint,  DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));
   }
     // imagine hackeman//
-  public void turnArm() {
-    armR.set(Robot.m_oi.joystickY() * 0.25);
-    armR.set(Robot.m_oi.getYMagnitudeOfRightSide()*0.25);
-    // armR.setSafetyEnabled(true);
-    // armR.setExpiration(1);
-    /*SmartDashboard.putNumber("motor output voltage", armR.getMotorOutputVoltage());    
-    
-    SmartDashboard.putNumber("motor output voltage left", armL.getMotorOutputVoltage());    
-
-    SmartDashboard.putNumber("motor output current", armR.getOutputCurrent());    
-    SmartDashboard.putNumber("pdp current for talon", pdp.getCurrent(4)); 
-    SmartDashboard.putNumber("pdp current for victor", pdp.getCurrent(5)); 
-    
-    
-    // SmartDashboard.putNumber("motor output voltage left", armL.getOutp);   */
-
+  public void rawTurnArm(double power) {
+    armR.set(ControlMode.PercentOutput, power, DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));
   }
-
-  public double getArmPosInDegrees()
-  {
-    return ((double) armR.getSelectedSensorPosition()) * 360.0 / (600.0 *5.0);
+  @Override
+  public void periodic()
+  {}
+  public double getPositionDegrees() {
+    return armR.getSelectedSensorPosition() * 360 / (4* 5 * 600);
   }
-
-
-
 }

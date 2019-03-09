@@ -23,13 +23,12 @@ public class ArmCommand extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Robot.m_armsubsystem.setCruiseAndAcceleration(10, 5);
+    
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Robot.m_armsubsystem.turnArm();
     if(Robot.m_oi.contr.getBumperPressed(GenericHID.Hand.kRight)) {
       Robot.m_armsubsystem.setArmPos(100);
     } else if (Robot.m_oi.contr.getBumperPressed(GenericHID.Hand.kLeft)) {
