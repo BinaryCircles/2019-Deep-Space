@@ -24,16 +24,16 @@ public class RobotMap {
   // public static int rangefinderPort = 1;
   // public static int rangefinderModule = 1;
     // define motors
-  public static final int talon_fl = 1;
+  public static final int talon_fl = 5;
   public static final int talon_fr = 2;
-  public static final int victor_bl = 8;
-  public static final int victor_br = 4;
+  public static final int victor_bl = 4;
+  public static final int victor_br = 6;
 
-  public static final int intake_t = 3;
-  public static final int intake_b = 7;
+  public static final int intake_t = 8;
+  public static final int intake_b = 3;
 
-  public static final int arm_talon = 5;
-  public static final int arm_victor = 6;
+  public static final int arm_talon = 1;
+  public static final int arm_victor = 7;
 
   public static final int solenoid_front = 0;
   public static final int solenoid_back = 1;

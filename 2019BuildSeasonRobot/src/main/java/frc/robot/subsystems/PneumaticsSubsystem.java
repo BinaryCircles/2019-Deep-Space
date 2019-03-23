@@ -25,8 +25,8 @@ public class PneumaticsSubsystem extends Subsystem {
     // !make sure to test which kind solenoid it is!
 
     pDouble.set(DoubleSolenoid.Value.kOff);
-    pDouble.set(DoubleSolenoid.Value.kForward);
-    pDouble.set(DoubleSolenoid.Value.kReverse);
+    pDouble.set(DoubleSolenoid.Value.kForward); // solenoid in
+    //pDouble.set(DoubleSolenoid.Value.kReverse); // solenoid out
 
   }
 

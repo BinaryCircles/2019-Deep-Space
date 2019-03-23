@@ -7,8 +7,6 @@
 
 package frc.robot;
 
-
-
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -27,6 +25,8 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.GenericHID;
 import frc.robot.commands.*;
 
@@ -38,8 +38,8 @@ import frc.robot.commands.*;
  * project.
  */
 public class Robot extends TimedRobot {
-  public static VisionSubsystem m_vissubsystem = new VisionSubsystem();
-  public static VisionCommand m_viscomm = new VisionCommand();
+  //public static VisionSubsystem m_vissubsystem = new VisionSubsystem();
+  //public static VisionCommand m_viscomm = new VisionCommand();
 
   public static PneumaticsSubsystem m_pnsub = new PneumaticsSubsystem();
   public static PneumaticsCommand m_pncomm = new PneumaticsCommand();
@@ -66,6 +66,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    UsbCamera cam = CameraServer.getInstance().startAutomaticCapture();
+    cam.setFPS(20);
     m_oi = new OI();
     // m_chooser.setDefaultOption("Default Auto", new AutoDriveCommand());
     // chooser.addOption("My Auto", new MyAutoCommand());
@@ -126,7 +128,7 @@ public class Robot extends TimedRobot {
     // if (m_autonomousCommand != null) {
     //   m_autonomousCommand.start();
     // }
-    m_armsubsystem.resetEncoder();
+    //m_armsubsystem.resetEncoder();
   }
 
   /**
@@ -135,7 +137,6 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     Scheduler.getInstance().run();
-    m_autoturncomm.start();
   }
 
   @Override
@@ -150,25 +151,18 @@ public class Robot extends TimedRobot {
   /**
    * This function is called periodically during operator control.
    */
+
   @Override
   public void teleopPeriodic() {
     //m_autoturncomm.cancel();
     Scheduler.getInstance().run();
     m_drivecomm.start();
-    m_viscomm.start();
+    //m_viscomm.start();
 
     m_intakecomm.start();
 
-    if (m_oi.contr.getYButtonPressed()) {
-     m_pncomm.execute();
-    }
-
-    if (m_oi.contr.getPOV() == 0) {
-      // m_drivesub.invertDirection();
-    }
-
-    if (m_oi.contr.getPOV() == 180) {
-      m_autoturncomm.start();
+    if (m_oi.joystick.getBumperPressed(GenericHID.Hand.kRight)) {
+      m_pncomm.execute();
     }
 
     m_armcomm.start();
@@ -180,5 +174,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
+
   }
 }

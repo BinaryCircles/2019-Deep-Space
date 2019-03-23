@@ -45,7 +45,19 @@ public class DriveSubsystem extends Subsystem {
   public boolean inverted = true;
 
   public double sineM = 0;
+  public DriveSubsystem()
+  {
+    talon_fl.configPeakOutputForward(1);
+    talon_fl.configPeakOutputReverse(-1);
+    talon_fr.configPeakOutputForward(1);
+    talon_fr.configPeakOutputReverse(-1);
+    victor_bl.follow(talon_fl);
+    victor_br.follow(talon_fr);
+    d_left.setInverted(inverted);
+    d_right.setInverted(inverted);
+    d_drive.setSafetyEnabled(false);
 
+  }
   //drive = new RobotDrive(talon_fl, talon_bl, talon_fr, talon_br);
 
   @Override
@@ -56,12 +68,7 @@ public class DriveSubsystem extends Subsystem {
     setDefaultCommand(new DriveCommand());
     // Inverting these speed controller groups lets the xbox joystick
     // directions match the robot's direction.
-    victor_bl.follow(talon_fl);
-    victor_br.follow(talon_fr);
-    d_left.setInverted(inverted);
-    d_right.setInverted(inverted);
 
-    d_drive.setSafetyEnabled(false);
     // d_drive.setExpiration(0.75);
 
     // arbitraryMotor.follow(talon_fl);
@@ -72,7 +79,7 @@ public class DriveSubsystem extends Subsystem {
   }
 
   public void curvatureDrive(double xSpeed, double zRotation, boolean isQuickTurn) {
-    d_drive.curvatureDrive(xSpeed, zRotation, isQuickTurn);
+    d_drive.curvatureDrive(xSpeed * 0.4, zRotation * 0.5, isQuickTurn);
   }
 
   public void invertDirection() {

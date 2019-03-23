@@ -29,13 +29,20 @@ public class IntakeCommand extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    if (Robot.m_oi.joystick.getTopPressed()) {
+    if (Robot.m_oi.getSecondControllerTriggerMagnitude() < -0.3) {
       Robot.m_intakesub.succ();
-    } else if (Robot.m_oi.joystick.getTriggerPressed()) {
+    } else if (Robot.m_oi.getSecondControllerTriggerMagnitude() > 0.3) {
       Robot.m_intakesub.spit();
     } else {
       Robot.m_intakesub.atRest();
     }
+    /*if (Robot.m_oi.contr.getAButton()) {
+      Robot.m_intakesub.succ();
+    } else if (Robot.m_oi.contr.getBButton()) {
+      Robot.m_intakesub.spit();
+    } else {
+      Robot.m_intakesub.atRest();
+    } outreach controls*/
   }
 
   // Make this return true when this Command no longer needs to run execute()

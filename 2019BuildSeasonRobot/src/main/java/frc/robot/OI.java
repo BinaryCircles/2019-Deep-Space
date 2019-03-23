@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.GenericHID;
-
+import edu.wpi.first.wpilibj.JoystickBase;
 import frc.robot.RobotMap;
 
 /**
@@ -49,14 +49,16 @@ public class OI {
 
   public static XboxController contr = new XboxController(RobotMap.driveJoystickLeft);
   // public static XboxController drive = new XboxController(RobotMap.driveJoystickRight);
-  public static Joystick joystick = new Joystick(0);
-  
+  public static XboxController joystick = new XboxController(RobotMap.driveJoystickRight);
+  /*public static Joystick joystick = new Joystick(0);
   public static JoystickButton aButton = new JoystickButton(contr, 1);
   public static JoystickButton bButton = new JoystickButton(contr, 2);
   public static JoystickButton xButton = new JoystickButton(contr, 3);
   public static JoystickButton yButton = new JoystickButton(contr, 4);
+  public static JoystickButton aButton2 = new JoystickButton(joystick, 1);
+  public static JoystickButton bButton2  = new JoystickButton(joystick, 2);
   public static JoystickButton jtrigger = new JoystickButton(joystick, 1);
-  public static JoystickButton jside = new JoystickButton(joystick, 2);
+  public static JoystickButton jside = new JoystickButton(joystick, 2);*/
 
 
 
@@ -66,15 +68,19 @@ public class OI {
     return Math.pow((-contr.getTriggerAxis(GenericHID.Hand.kRight)+contr.getTriggerAxis(GenericHID.Hand.kLeft)), 3);
   }
 
+  public double getSecondControllerTriggerMagnitude() {
+    return -Math.pow((-joystick.getTriggerAxis(GenericHID.Hand.kRight) + joystick.getTriggerAxis(GenericHID.Hand.kLeft)), 3);
+  }
+
 
   // Return the magnitude (from -1 to 1) of the right stick's Y component
 
-  // Return the magnitude (from -1 to 1) of the right stick's X component.
-  public double getYMagnitudeOfRightSide() {
-    return Math.pow(contr.getY(GenericHID.Hand.kRight), 3);
+  // Return the magnitude (from -1 to 1) of the arm controller's right stick's Y component.
+  public double getYMagnitudeOfJoystickLeftSide() {
+    return Math.pow(joystick.getY(GenericHID.Hand.kLeft), 3);
   }
   public double getXMagnitudeOfLeftSide() {
-    return Math.pow(contr.getX(GenericHID.Hand.kLeft), 5) * -1;
+    return Math.pow(contr.getX(GenericHID.Hand.kLeft), 3) * -1;
   }
   
   // public double getZRotation() {

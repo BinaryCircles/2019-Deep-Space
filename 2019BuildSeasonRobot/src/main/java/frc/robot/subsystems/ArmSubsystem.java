@@ -30,29 +30,39 @@ public class ArmSubsystem extends Subsystem
   private static ArmSubsystem armSub = new ArmSubsystem();
   private static TalonSRX armR; 
   private static VictorSPX armL;
+
   // PID constants
   private static double kP;
   private static double kI;
   private static double kD;
+
   //Linearizing feedforward constant;
   private static double kF_lin;
+  private static double m_setpoint;
+
+  public boolean rawTurnEnabled = false;
+
   //Default constructor
   public ArmSubsystem()
   {
     super("Arm Subsystem");
     armR  = new TalonSRX(RobotMap.arm_talon);
     armL = new VictorSPX(RobotMap.arm_victor);
-    kP = 0.0;
+    kP = 0.01;
     kI = 0.0;
     kD = 0.0;
-    kF_lin = 0.125;
+    kF_lin = 0.1408;
     armR = new TalonSRX(RobotMap.arm_talon);
     armL = new VictorSPX(RobotMap.arm_victor);
     armR.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
-    armL.setInverted(false);
+    armL.setInverted(true);
     armL.follow(armR);
-    armR.configPeakOutputForward(1); 
+    armR.configPeakOutputForward(1);
     armL.configPeakOutputForward(1);
+    armR.configPeakCurrentLimit(1);
+    armR.enableCurrentLimit(true);
+
+    m_setpoint = 0;
   }
   public static ArmSubsystem getInstance()
   {
@@ -61,20 +71,35 @@ public class ArmSubsystem extends Subsystem
   @Override
   public void initDefaultCommand() {
   }
+
+  public void changeRawTurnStatus() {
+    rawTurnEnabled = !rawTurnEnabled;
+  }  
  
-
-
   public void setArmPos(double setpoint) {
-    armR.set(ControlMode.Position, setpoint,  DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));
+    if (!rawTurnEnabled) {
+      m_setpoint = setpoint;
+      armR.set(ControlMode.Position, setpoint,  DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));
+    }
   }
     // imagine hackeman//
   public void rawTurnArm(double power) {
-    armR.set(ControlMode.PercentOutput, power, DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));
+    if (rawTurnEnabled) {
+      armR.set(ControlMode.PercentOutput, power, DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));
+    }
   }
+
   @Override
-  public void periodic()
-  {}
-  public double getPositionDegrees() {
-    return armR.getSelectedSensorPosition() * 360 / (4* 5 * 600);
+  public void periodic() {
+    armR.set(ControlMode.PercentOutput, m_setpoint, DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));
   }
+
+  public double getEncoderValue() {
+    return armR.getSelectedSensorPosition();
+  }
+
+  public double getPositionDegrees() {
+    return ((armR.getSelectedSensorPosition())* 360.0 / (4.0 * 256.0));
+  }
+
 }
