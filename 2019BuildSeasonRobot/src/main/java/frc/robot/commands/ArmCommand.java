@@ -38,7 +38,7 @@ public class ArmCommand extends Command {
     //Robot.m_armsubsystem.setArmPos(0);
 
     if (Robot.m_oi.joystick.getAButtonPressed()) { // hatch forward
-      Robot.m_armsubsystem.setArmPos(-4);
+      Robot.m_armsubsystem.setArmPos(0);
     } else if (Robot.m_oi.joystick.getBButtonPressed()) { // ship cargo forward
       Robot.m_armsubsystem.setArmPos(60);
     } else if (Robot.m_oi.joystick.getXButtonPressed()) { // rocket cargo forward
@@ -52,7 +52,7 @@ public class ArmCommand extends Command {
     } else if (Robot.m_oi.joystick.getPOV() == 180) { // hatch passthrough
       Robot.m_armsubsystem.setArmPos(155);
     } else if (Robot.m_oi.joystick.getYButtonPressed()) {
-      Robot.m_armsubsystem.setArmPos(-10);
+      Robot.m_armsubsystem.setArmPos(0);
     }
     SmartDashboard.putNumber("arm encoder value", Robot.m_armsubsystem.getEncoderValue());
     System.out.println(Robot.m_armsubsystem.getEncoderValue());

@@ -51,14 +51,15 @@ public class ArmSubsystemRio extends Subsystem
     rawTurnEnabled = false;
     kF_lin = 0.1408;
     kP = 0.01486;
-    kI = 0.0;
-    kD = 0.0;
+    kI = 0.002;
+    kD = 0.00002;
     controller = new SynchronousPIDF(kP, kI, kD);
     armR  = new TalonSRX(RobotMap.arm_talon);
     armL = new VictorSPX(RobotMap.arm_victor);
     pwr=0;
-    armR.configPeakCurrentLimit(1);
     armR.enableCurrentLimit(true);
+    armR.configPeakCurrentLimit(20);
+    armR.configPeakCurrentDuration(50);
     armR = new TalonSRX(RobotMap.arm_talon);
     armL = new VictorSPX(RobotMap.arm_victor);
     armR.setInverted(true);
@@ -66,7 +67,7 @@ public class ArmSubsystemRio extends Subsystem
     armL.setInverted(true);
     currentPos = new Encoder(0, 1, true, Encoder.EncodingType.k4X);
     currentPos.reset(); 
-    startingEncoderPosition = 106;
+    startingEncoderPosition = 118;
     m_setpoint = 118;
     controller.setSetpoint(m_setpoint);
     armR.setSelectedSensorPosition(0);
@@ -86,7 +87,7 @@ public class ArmSubsystemRio extends Subsystem
 
   public void setArmPos(int setpoint) {
  
-      //armR.configPeakCurrentLimit(1);
+      armR.configPeakCurrentLimit(1);
       m_setpoint = setpoint;
       controller.setSetpoint((double) m_setpoint );  
     
@@ -94,7 +95,7 @@ public class ArmSubsystemRio extends Subsystem
     // imagine hackeman//
   public void rawTurnArm(double power) {
     if (rawTurnEnabled) {
-      //armR.configPeakCurrentLimit(1);
+      armR.configPeakCurrentLimit(40);
       armR.set(ControlMode.PercentOutput, power, DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));
       pwr = (power/2);
     }
@@ -106,7 +107,7 @@ public void changeRawTurnStatus() {
   @Override
   public void periodic()
   {
-    double pidOutput = controller.calculate(getPositionDegrees(), m_setpoint);
+    double pidOutput = controller.calculate(getPositionDegrees(), 0.02);
     // System.out.println(pidOutput);
 
     //armR.set(ControlMode.PercentOutput, pidOutput, DemandType.ArbitraryFeedForward, kF_lin* Math.cos(Math.toRadians(getPositionDegrees())));
@@ -116,7 +117,7 @@ public void changeRawTurnStatus() {
       armR.set(ControlMode.PercentOutput, pidOutput, DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));      
     }
 
-    SmartDashboard.putNumber("Talon Raw Output", armR.getSelectedSensorPosition());
+    SmartDashboard.putNumber("Encoder Raw Output", getEncoderValue());
     SmartDashboard.putNumber("Arm Output", getPositionDegrees());
     SmartDashboard.putNumber("Arm pid Output", pidOutput );
     SmartDashboard.putNumber("Arm setpoint", m_setpoint );

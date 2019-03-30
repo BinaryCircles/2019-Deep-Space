@@ -11,6 +11,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 // initiate pneumatics subsystem
 public class PneumaticsSubsystem extends Subsystem {
@@ -42,7 +43,8 @@ public class PneumaticsSubsystem extends Subsystem {
       //might need to change this from kReverse to kForward or kOff based on solenoid type
       pDouble.set(DoubleSolenoid.Value.kForward);
     }
-    arm_extended_flag = !arm_extended_flag; 
+    arm_extended_flag = !arm_extended_flag;
+    SmartDashboard.putBoolean("Pneumatic Closed", arm_extended_flag);
   } 
 
 }

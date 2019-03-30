@@ -32,6 +32,7 @@ public class DriveCommand extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    Robot.m_drivesub.enableBoost(Robot.m_oi.contr.getBButton());
     //sineMovement += Math.PI / 200; //add pi/400 every time execute is called to simulate sin curve movement (temp)
     curveExecute();
   }

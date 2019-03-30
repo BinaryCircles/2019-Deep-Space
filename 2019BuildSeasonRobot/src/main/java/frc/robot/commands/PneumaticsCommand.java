@@ -16,7 +16,7 @@ import frc.robot.Robot;
 public class PneumaticsCommand extends Command {
   public PneumaticsCommand() {
     // Use requires() here to declare subsystem dependencies
-    //requires(Robot.m_pnsub);
+    requires(Robot.m_pnsub);
   }
 
   // Called just before this Command runs the first time

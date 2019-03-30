@@ -44,6 +44,8 @@ public class DriveSubsystem extends Subsystem {
   public AHRS ahrs = new AHRS(SPI.Port.kMXP);
   public boolean inverted = true;
 
+  public boolean boostEnabled = false;
+
   public double sineM = 0;
   public DriveSubsystem()
   {
@@ -79,7 +81,19 @@ public class DriveSubsystem extends Subsystem {
   }
 
   public void curvatureDrive(double xSpeed, double zRotation, boolean isQuickTurn) {
-    d_drive.curvatureDrive(xSpeed * 0.4, zRotation * 0.5, isQuickTurn);
+    if (boostEnabled) {
+      d_drive.curvatureDrive(xSpeed, zRotation * 0.8, isQuickTurn);
+    } else {
+      d_drive.curvatureDrive(xSpeed * 0.6, zRotation * 0.8, isQuickTurn);
+    }
+  }
+
+  public void enableBoost(boolean bPressed) {
+    if (bPressed) {
+      boostEnabled = true;
+    } else {
+      boostEnabled = false;
+    }
   }
 
   public void invertDirection() {

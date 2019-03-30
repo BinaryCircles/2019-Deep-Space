@@ -128,7 +128,7 @@ public class Robot extends TimedRobot {
     // if (m_autonomousCommand != null) {
     //   m_autonomousCommand.start();
     // }
-    //m_armsubsystem.resetEncoder();
+    m_armsubsystem.resetEncoder();
   }
 
   /**
@@ -137,6 +137,17 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     Scheduler.getInstance().run();
+    //m_autoturncomm.cancel();
+    m_drivecomm.start();
+    //m_viscomm.start();
+
+    m_intakecomm.start();
+
+    if (m_oi.joystick.getBumperPressed(GenericHID.Hand.kRight)) {
+      // m_pncomm.execute();
+    }
+
+    // m_armcomm.start();
   }
 
   @Override
@@ -162,6 +173,7 @@ public class Robot extends TimedRobot {
     m_intakecomm.start();
 
     if (m_oi.joystick.getBumperPressed(GenericHID.Hand.kRight)) {
+      
       m_pncomm.execute();
     }
 
