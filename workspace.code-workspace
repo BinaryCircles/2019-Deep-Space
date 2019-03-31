@@ -1,0 +1,10 @@
+{
+	"folders": [
+		{
+			"path": "2019BuildSeasonRobot"
+		}
+	],
+	"settings": {
+		"java.configuration.updateBuildConfiguration": "automatic"
+	}
+}

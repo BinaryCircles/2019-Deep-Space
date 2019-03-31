@@ -84,7 +84,8 @@ public class DriveSubsystem extends Subsystem {
     if (boostEnabled) {
       d_drive.curvatureDrive(xSpeed, zRotation * 0.8, isQuickTurn);
     } else {
-      d_drive.curvatureDrive(xSpeed * 0.6, zRotation * 0.8, isQuickTurn);
+      //changed un-boost speed to 0.3 x input for outreach demo at KIMS
+      d_drive.curvatureDrive(xSpeed * 0.3, zRotation * 0.8, isQuickTurn);
     }
   }
 

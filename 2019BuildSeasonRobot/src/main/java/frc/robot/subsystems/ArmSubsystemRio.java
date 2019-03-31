@@ -49,10 +49,10 @@ public class ArmSubsystemRio extends Subsystem
   {
     super("Arm Subsystem");
     rawTurnEnabled = false;
-    kF_lin = 0.1408;
-    kP = 0.01486;
-    kI = 0.002;
-    kD = 0.00002;
+    kF_lin = 0.097;
+    kP = 0.055;
+    kI = 0.0;
+    kD = 0.0;
     controller = new SynchronousPIDF(kP, kI, kD);
     armR  = new TalonSRX(RobotMap.arm_talon);
     armL = new VictorSPX(RobotMap.arm_victor);
@@ -65,10 +65,10 @@ public class ArmSubsystemRio extends Subsystem
     armR.setInverted(true);
     armL.follow(armR);
     armL.setInverted(true);
-    currentPos = new Encoder(0, 1, true, Encoder.EncodingType.k4X);
+    currentPos = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
     currentPos.reset(); 
-    startingEncoderPosition = 118;
-    m_setpoint = 118;
+    startingEncoderPosition = -0.5;
+    m_setpoint = 45;
     controller.setSetpoint(m_setpoint);
     armR.setSelectedSensorPosition(0);
     }
@@ -96,7 +96,7 @@ public class ArmSubsystemRio extends Subsystem
   public void rawTurnArm(double power) {
     if (rawTurnEnabled) {
       armR.configPeakCurrentLimit(40);
-      armR.set(ControlMode.PercentOutput, power, DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));
+      armR.set(ControlMode.PercentOutput, power/2, DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));
       pwr = (power/2);
     }
   }
@@ -114,13 +114,16 @@ public void changeRawTurnStatus() {
     if (rawTurnEnabled) {
       armR.set(ControlMode.PercentOutput, pwr, DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));
     } else {
-      armR.set(ControlMode.PercentOutput, pidOutput, DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));      
+      armR.set(ControlMode.PercentOutput, pidOutput, DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));
+      //armR.set(ControlMode.PercentOutput,  kF_lin);      
     }
 
     SmartDashboard.putNumber("Encoder Raw Output", getEncoderValue());
     SmartDashboard.putNumber("Arm Output", getPositionDegrees());
     SmartDashboard.putNumber("Arm pid Output", pidOutput );
     SmartDashboard.putNumber("Arm setpoint", m_setpoint );
+    SmartDashboard.putNumber("PID Error", controller.getError());
+    SmartDashboard.putNumber("PID Error 2", controller.getError());
   }
 
   public double getEncoderValue() {

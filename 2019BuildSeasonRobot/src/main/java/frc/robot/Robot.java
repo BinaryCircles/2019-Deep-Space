@@ -147,7 +147,7 @@ public class Robot extends TimedRobot {
       // m_pncomm.execute();
     }
 
-    // m_armcomm.start();
+    m_armcomm.start();
   }
 
   @Override
