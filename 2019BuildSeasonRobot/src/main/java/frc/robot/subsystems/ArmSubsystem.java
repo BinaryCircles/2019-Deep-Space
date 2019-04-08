@@ -101,8 +101,8 @@ public class ArmSubsystem extends Subsystem
       armR.set(ControlMode.PercentOutput, pwr, DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));
     } else {
       armR.set(ControlMode.Position, m_setpoint, DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));   
-    }     
-
+    }
+    SmartDashboard.putNumber("error", armR.getClosedLoopError());
     SmartDashboard.putNumber("encoder value", getEncoderValue());
     SmartDashboard.putNumber("stall output",kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));
     SmartDashboard.putNumber("encoder degrees", getPositionDegrees());
