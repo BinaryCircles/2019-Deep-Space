@@ -26,13 +26,18 @@ public class IntakeSubsystem extends Subsystem {
   }
 
   public void spit() {
-    intake_t.set(0.5);
-    intake_b.set(-0.5);
+    intake_t.set(0.35);
+    intake_b.set(-0.35);
   }
 
   public void atRest() {
     intake_t.set(0.0);
     intake_b.set(0.0);
+  }
+
+  public void runIntakeAnalog(double power) {
+    intake_t.set(power);
+    intake_b.set(-power);
   }
 
   @Override

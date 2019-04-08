@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.JoystickBase;
 import frc.robot.Robot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * An example command.  You can replace me with your own command.
@@ -36,6 +37,10 @@ public class IntakeCommand extends Command {
     } else {
       Robot.m_intakesub.atRest();
     }
+
+    SmartDashboard.putNumber("analog input", Robot.m_oi.getSecondControllerTriggerMagnitude());
+    //Robot.m_intakesub.runIntakeAnalog(Robot.m_oi.getSecondControllerTriggerMagnitude());
+
     /*if (Robot.m_oi.contr.getAButton()) {
       Robot.m_intakesub.succ();
     } else if (Robot.m_oi.contr.getBButton()) {

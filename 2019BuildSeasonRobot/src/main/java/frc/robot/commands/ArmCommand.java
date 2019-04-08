@@ -37,7 +37,7 @@ public class ArmCommand extends Command {
 
     //Robot.m_armsubsystem.setArmPos(0);
 
-    if (Robot.m_oi.joystick.getAButtonPressed()) { // hatch forward
+    /*if (Robot.m_oi.joystick.getAButtonPressed()) { // hatch forward
       Robot.m_armsubsystem.setArmPos(0);
     } else if (Robot.m_oi.joystick.getBButtonPressed()) { // ship cargo forward
       Robot.m_armsubsystem.setArmPos(60);
@@ -53,10 +53,10 @@ public class ArmCommand extends Command {
       Robot.m_armsubsystem.setArmPos(155);
     } else if (Robot.m_oi.joystick.getYButtonPressed()) {
       Robot.m_armsubsystem.setArmPos(0);
-    }
+    }*/
     SmartDashboard.putNumber("arm encoder value", Robot.m_armsubsystem.getEncoderValue());
-    System.out.println(Robot.m_armsubsystem.getEncoderValue());
-    Robot.m_armsubsystem.rawTurnArm(-Robot.m_oi.joystick.getY(GenericHID.Hand.kLeft) * 0.4);
+
+    Robot.m_armsubsystem.rawTurnArm(Robot.m_oi.getYMagnitudeOfJoystickLeftSide() * -1);
   }
 
   // Make this return true when this Command no longer needs to run execute()
