@@ -89,10 +89,10 @@ public class ArmSubsystem extends Subsystem
   }
     // imagine hackeman//
   public void rawTurnArm(double power) {
-    if (rawTurnEnabled) {
+    /*if (rawTurnEnabled) {
       armR.set(ControlMode.PercentOutput, power, DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));
       pwr = power;
-    }
+    }*/
   }
 
   @Override
