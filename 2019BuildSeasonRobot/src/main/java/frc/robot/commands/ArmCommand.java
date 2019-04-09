@@ -24,7 +24,7 @@ public class ArmCommand extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    
+    Robot.m_armsubsystem.zeroEncoder();
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -34,8 +34,6 @@ public class ArmCommand extends Command {
     if (Robot.m_oi.joystick.getBumperPressed(GenericHID.Hand.kLeft)) {
       Robot.m_armsubsystem.changeRawTurnStatus();
     }
-
-    //Robot.m_armsubsystem.setArmPos(0);
 
     /*if (Robot.m_oi.joystick.getAButtonPressed()) { // hatch forward
       Robot.m_armsubsystem.setArmPos(0);
@@ -54,9 +52,10 @@ public class ArmCommand extends Command {
     } else if (Robot.m_oi.joystick.getYButtonPressed()) {
       Robot.m_armsubsystem.setArmPos(0);
     }*/
-    SmartDashboard.putNumber("arm encoder value", Robot.m_armsubsystem.getEncoderValue());
 
     Robot.m_armsubsystem.rawTurnArm(Robot.m_oi.getYMagnitudeOfJoystickLeftSide() * -1);
+    Robot.m_armsubsystem.outputToSmartDashboard();
+
   }
 
   // Make this return true when this Command no longer needs to run execute()

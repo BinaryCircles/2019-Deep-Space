@@ -7,7 +7,6 @@
 
 package frc.robot.subsystems;
 
-// import edu.wpi.first.hal.can.CANMessageNotAllowedException;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,104 +15,98 @@ import frc.robot.RobotMap;
 import com.ctre.phoenix.*;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-//import com.ctre.phoenix.motorcontrol.can;    
 
 /**
- * Arm subsystem
- */
-public class ArmSubsystem extends Subsystem 
-  {
-  // Put methods for controlling this subsystem
-  // here. Call these from Commands.
+* Arm subsystem controlled by Talon motor controllers.
+*/
+
+public class ArmSubsystem extends Subsystem {
+  
+  // initializing variables
   private static ArmSubsystem armSub = new ArmSubsystem();
-  private static TalonSRX armR; 
-  private static VictorSPX armL;
+  private static TalonSRX armTalon;
+  private static VictorSPX armVictor;
 
-  // PID constants
-  private static double kP;
-  private static double kI;
-  private static double kD;
-
-  //Linearizing feedforward constant;
-  private static double kF_lin;
+  // pid constants
+  private static double kP, kI, kD;
+  private static double kF_Lin;
   private static double m_setpoint;
-  private double pwr;
-  public boolean rawTurnEnabled = false;
+  
+  private double rawPower;
+  private boolean rawTurnEnabled;
 
-  //Default constructor
-  public ArmSubsystem()
-  {
-    super("Arm Subsystem");
-    pwr = 0;
-    armR  = new TalonSRX(RobotMap.arm_talon);
-    armL = new VictorSPX(RobotMap.arm_victor);
-    kP = 0.001;
+  // constructor
+  public ArmSubsystem() {
+
+    // instantiate motor controllers
+    armTalon = new TalonSRX(RobotMap.arm_talon);
+    armVictor = new VictorSPX(RobotMap.arm_victor);
+    rawTurnEnabled = false;
+
+    // initialize constants
+    kP = 0.0;
     kI = 0.0;
     kD = 0.0;
-    kF_lin = 0.175;
-    armR = new TalonSRX(RobotMap.arm_talon);
-    armL = new VictorSPX(RobotMap.arm_victor);
-    armR.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
-    armL.setInverted(true);
-    armR.setInverted(true);
-    armR.setSensorPhase(true);
-    armL.follow(armR);
-    armR.enableCurrentLimit(true);
-    armR.configPeakCurrentLimit(80);
-    armR.configPeakCurrentDuration(50);
-    armR.config_kP(0, kP);
-    armR.config_kI(0, kI);
-    armR.config_kD(0, kD);
-    armR.setSelectedSensorPosition(-22);
-    m_setpoint = 507;
-  }
-  public static ArmSubsystem getInstance()
-  {
-    return armSub;
-  }
-  @Override
-  public void initDefaultCommand() {
+    kF_Lin = 0.0;
+
+    // configure motor controllers
+    armTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
+    armTalon.setInverted(true);
+    armTalon.enableCurrentLimit(true);
+    armTalon.configPeakCurrentLimit(20);
+    armTalon.configPeakCurrentDuration(50);
+    armVictor.follow(armTalon);
+
+    armTalon.config_kP(0, kP);
+    armTalon.config_kI(0, kI);
+    armTalon.config_kD(0, kD);
+    armTalon.setSelectedSensorPosition(-22); // -22 encoder ticks = ~-2 degrees
+
+    m_setpoint = 507; // 507 encoder ticks = 45 degrees
+
   }
 
+  // toggle raw turn on/off
   public void changeRawTurnStatus() {
     rawTurnEnabled = !rawTurnEnabled;
-  }  
- 
+  }
+
+  // set pid setpoint
   public void setArmPos(double setpoint) {
     if (!rawTurnEnabled) {
       m_setpoint = setpoint;
-      armR.set(ControlMode.Position, setpoint,  DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));
+      armTalon.set(ControlMode.Position, setpoint, DemandType.ArbitraryFeedForward, kF_Lin * Math.cos(Math.toRadians(getPositionDegrees())));  
     }
   }
-    // imagine hackeman//
+
+  // move arm according to a user-set power
   public void rawTurnArm(double power) {
-    /*if (rawTurnEnabled) {
-      armR.set(ControlMode.PercentOutput, power, DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));
-      pwr = power;
-    }*/
+    if (rawTurnEnabled) {
+      armTalon.set(ControlMode.PercentOutput, power, DemandType.ArbitraryFeedForward, kF_Lin * Math.cos(Math.toRadians(getPositionDegrees())));
+    }
+  }
+  
+  // output debugging information to shuffleboard
+  public synchronized void outputToSmartDashboard() {
+    SmartDashboard.putNumber("arm loop error", armTalon.getClosedLoopError());
+    SmartDashboard.putNumber("arm encoder value", armTalon.getSelectedSensorPosition());
+    SmartDashboard.putNumber("arm encoder calculated degrees", getPositionDegrees());
+  }
+
+  // set the encoder value to ~-2 degrees (call when arm is resting on ground)
+  public void zeroEncoder() {
+    armTalon.setSelectedSensorPosition(-22);
+  }
+
+  // convert encoder ticks to degrees
+  public double getPositionDegrees() {
+    return (armTalon.getSelectedSensorPosition() * 360.0 / (4.0 * 1024.0));
   }
 
   @Override
-  public void periodic() {
-    if (rawTurnEnabled) {
-      armR.set(ControlMode.PercentOutput, pwr, DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));
-    } else {
-      armR.set(ControlMode.Position, m_setpoint, DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));   
-    }
-    SmartDashboard.putNumber("error", armR.getClosedLoopError());
-    SmartDashboard.putNumber("encoder value", getEncoderValue());
-    SmartDashboard.putNumber("stall output",kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));
-    SmartDashboard.putNumber("encoder degrees", getPositionDegrees());
+  public void initDefaultCommand() {
+    // Set the default command for a subsystem here.
+    // setDefaultCommand(new MySpecialCommand());
   }
-
-  public double getEncoderValue() {
-    return armR.getSelectedSensorPosition();
-  }
-
-  public double getPositionDegrees() {
-    return ((armR.getSelectedSensorPosition())* 360.0 / (4.0 * 1024.0));
-  }
-
 }
