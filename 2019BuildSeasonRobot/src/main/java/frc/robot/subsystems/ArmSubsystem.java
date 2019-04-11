@@ -30,7 +30,7 @@ public class ArmSubsystem extends Subsystem {
 
   // pid constants
   private static double kP, kI, kD;
-  private static double kF_Lin;
+  private static double kF_lin;
   private static double m_setpoint;
   
   private double rawPower;
@@ -45,59 +45,72 @@ public class ArmSubsystem extends Subsystem {
     rawTurnEnabled = false;
 
     // initialize constants
-    kP = 0.0;
+    kP = 98.25;
     kI = 0.0;
-    kD = 0.0;
-    kF_Lin = 0.0;
+    kD = 6;
+    kF_lin = 0.1931;
 
     // configure motor controllers
     armTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
     armTalon.setInverted(true);
+    armVictor.setInverted(true);
+    armTalon.setSensorPhase(true);
     armTalon.enableCurrentLimit(true);
-    armTalon.configPeakCurrentLimit(20);
+    armTalon.configPeakCurrentLimit(30);
     armTalon.configPeakCurrentDuration(50);
     armVictor.follow(armTalon);
 
     armTalon.config_kP(0, kP);
     armTalon.config_kI(0, kI);
     armTalon.config_kD(0, kD);
-    armTalon.setSelectedSensorPosition(-22); // -22 encoder ticks = ~-2 degrees
-
-    m_setpoint = 507; // 507 encoder ticks = 45 degrees
+    
+    m_setpoint = 254; // 507 encoder ticks = 45 degrees
 
   }
-
+  public void encoderReset()
+  {
+    armTalon.setSelectedSensorPosition(-22); // -22 encoder ticks = ~-2 degrees
+  }
   // toggle raw turn on/off
   public void changeRawTurnStatus() {
     rawTurnEnabled = !rawTurnEnabled;
   }
 
+  // update variable setpoint
+  public void updateSetpoint(double setpoint) {
+    m_setpoint = setpoint;
+  }
+
   // set pid setpoint
-  public void setArmPos(double setpoint) {
+  public void updatePower() {
     if (!rawTurnEnabled) {
-      m_setpoint = setpoint;
-      armTalon.set(ControlMode.Position, setpoint, DemandType.ArbitraryFeedForward, kF_Lin * Math.cos(Math.toRadians(getPositionDegrees())));  
+      armTalon.set(ControlMode.Position, m_setpoint, DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));  
+      //armTalon.set(ControlMode.PercentOutput, kF_lin); // stall tuning script
     }
   }
 
   // move arm according to a user-set power
   public void rawTurnArm(double power) {
     if (rawTurnEnabled) {
-      armTalon.set(ControlMode.PercentOutput, power, DemandType.ArbitraryFeedForward, kF_Lin * Math.cos(Math.toRadians(getPositionDegrees())));
+      armTalon.set(ControlMode.PercentOutput, power, DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));
     }
+  }
+
+  // called every 20 ms
+  public void periodic() {
+    updatePower();
+    outputToSmartDashboard();
   }
   
   // output debugging information to shuffleboard
-  public synchronized void outputToSmartDashboard() {
+  public void outputToSmartDashboard() {
     SmartDashboard.putNumber("arm loop error", armTalon.getClosedLoopError());
     SmartDashboard.putNumber("arm encoder value", armTalon.getSelectedSensorPosition());
     SmartDashboard.putNumber("arm encoder calculated degrees", getPositionDegrees());
+    SmartDashboard.putNumber("arm current", armTalon.getOutputCurrent());
   }
 
-  // set the encoder value to ~-2 degrees (call when arm is resting on ground)
-  public void zeroEncoder() {
-    armTalon.setSelectedSensorPosition(-22);
-  }
+  
 
   // convert encoder ticks to degrees
   public double getPositionDegrees() {

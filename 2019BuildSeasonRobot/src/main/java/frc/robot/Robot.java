@@ -115,6 +115,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    
+    m_armsubsystem.encoderReset();
     // m_autonomousCommand = m_chooser.getSelected();
 
     /*
@@ -128,7 +130,7 @@ public class Robot extends TimedRobot {
     // if (m_autonomousCommand != null) {
     //   m_autonomousCommand.start();
     // }
-    m_armsubsystem.zeroEncoder();
+    //m_armsubsystem.zeroEncoder();
   }
 
   /**
@@ -136,6 +138,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
+    
     Scheduler.getInstance().run();
     //m_autoturncomm.cancel();
     m_drivecomm.start();

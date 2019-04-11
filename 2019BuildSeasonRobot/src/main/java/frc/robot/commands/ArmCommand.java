@@ -24,7 +24,7 @@ public class ArmCommand extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Robot.m_armsubsystem.zeroEncoder();
+    //Robot.m_armsubsystem.zeroEncoder();
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -36,21 +36,21 @@ public class ArmCommand extends Command {
     }
 
     /*if (Robot.m_oi.joystick.getAButtonPressed()) { // hatch forward
-      Robot.m_armsubsystem.setArmPos(0);
+      Robot.m_armsubsystem.updateSetpoint(0);
     } else if (Robot.m_oi.joystick.getBButtonPressed()) { // ship cargo forward
-      Robot.m_armsubsystem.setArmPos(60);
+      Robot.m_armsubsystem.updateSetpoint(60);
     } else if (Robot.m_oi.joystick.getXButtonPressed()) { // rocket cargo forward
-      Robot.m_armsubsystem.setArmPos(30);
+      Robot.m_armsubsystem.updateSetpoint(30);
     } else if (Robot.m_oi.joystick.getPOV() == 0) { // starting pos
-      Robot.m_armsubsystem.setArmPos(118);
+      Robot.m_armsubsystem.updateSetpoint(118);
     } else if (Robot.m_oi.joystick.getPOV() == 270) { // rocket cargo passthrough
-      Robot.m_armsubsystem.setArmPos(150);
+      Robot.m_armsubsystem.updateSetpoint(150);
     } else if (Robot.m_oi.joystick.getPOV() == 90) { // ship cargo passthrough
-      Robot.m_armsubsystem.setArmPos(120);
+      Robot.m_armsubsystem.updateSetpoint(120);
     } else if (Robot.m_oi.joystick.getPOV() == 180) { // hatch passthrough
-      Robot.m_armsubsystem.setArmPos(155);
+      Robot.m_armsubsystem.updateSetpoint(155);
     } else if (Robot.m_oi.joystick.getYButtonPressed()) {
-      Robot.m_armsubsystem.setArmPos(0);
+      Robot.m_armsubsystem.updateSetpoint(0);
     }*/
 
     Robot.m_armsubsystem.rawTurnArm(Robot.m_oi.getYMagnitudeOfJoystickLeftSide() * -1);
