@@ -51,6 +51,7 @@ public class Robot extends TimedRobot {
   public static DriveCommand m_drivecomm = new DriveCommand();
 
   public static ArmSubsystem m_armsubsystem = new ArmSubsystem();
+  //public static ArmSubsystemRio m_armsubsystem = new ArmSubsystemRio();
   public static ArmCommand m_armcomm = new ArmCommand();
 
   public static AutoDriveCommand m_autodrivecomm = new AutoDriveCommand();
@@ -116,7 +117,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     
-    m_armsubsystem.encoderReset();
+    m_armsubsystem.resetEncoder();
     // m_autonomousCommand = m_chooser.getSelected();
 
     /*

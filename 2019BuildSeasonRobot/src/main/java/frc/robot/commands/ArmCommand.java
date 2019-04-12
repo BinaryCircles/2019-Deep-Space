@@ -54,7 +54,7 @@ public class ArmCommand extends Command {
     }*/
 
     Robot.m_armsubsystem.rawTurnArm(Robot.m_oi.getYMagnitudeOfJoystickLeftSide() * -1);
-    Robot.m_armsubsystem.outputToSmartDashboard();
+    //Robot.m_armsubsystem.outputToSmartDashboard();
 
   }
 

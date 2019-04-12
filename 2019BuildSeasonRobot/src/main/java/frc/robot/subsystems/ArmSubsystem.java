@@ -33,7 +33,6 @@ public class ArmSubsystem extends Subsystem {
   private static double kF_lin;
   private static double m_setpoint;
   
-  private double rawPower;
   private boolean rawTurnEnabled;
 
   // constructor
@@ -45,10 +44,10 @@ public class ArmSubsystem extends Subsystem {
     rawTurnEnabled = false;
 
     // initialize constants
-    kP = 98.25;
+    kP = 0.0;
     kI = 0.0;
-    kD = 6;
-    kF_lin = 0.1931;
+    kD = 0.0;
+    kF_lin = 0.0;
 
     // configure motor controllers
     armTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
@@ -58,19 +57,22 @@ public class ArmSubsystem extends Subsystem {
     armTalon.enableCurrentLimit(true);
     armTalon.configPeakCurrentLimit(30);
     armTalon.configPeakCurrentDuration(50);
+    armTalon.configContinuousCurrentLimit(30);
     armVictor.follow(armTalon);
 
     armTalon.config_kP(0, kP);
     armTalon.config_kI(0, kI);
     armTalon.config_kD(0, kD);
     
-    m_setpoint = 254; // 507 encoder ticks = 45 degrees
+    m_setpoint = 254; // 507 encoder ticks = 45 degree
 
   }
-  public void encoderReset()
-  {
+
+  // reset encoder
+  public void resetEncoder() {
     armTalon.setSelectedSensorPosition(-22); // -22 encoder ticks = ~-2 degrees
   }
+
   // toggle raw turn on/off
   public void changeRawTurnStatus() {
     rawTurnEnabled = !rawTurnEnabled;
@@ -84,8 +86,10 @@ public class ArmSubsystem extends Subsystem {
   // set pid setpoint
   public void updatePower() {
     if (!rawTurnEnabled) {
-      armTalon.set(ControlMode.Position, m_setpoint, DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));  
+      //armTalon.set(ControlMode.Position, m_setpoint, DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));  
       //armTalon.set(ControlMode.PercentOutput, kF_lin); // stall tuning script
+      armTalon.set(ControlMode.PercentOutput, 0);
+      //SmartDashboard.putNumber("kf lin", kF_lin);
     }
   }
 
@@ -108,6 +112,7 @@ public class ArmSubsystem extends Subsystem {
     SmartDashboard.putNumber("arm encoder value", armTalon.getSelectedSensorPosition());
     SmartDashboard.putNumber("arm encoder calculated degrees", getPositionDegrees());
     SmartDashboard.putNumber("arm current", armTalon.getOutputCurrent());
+    SmartDashboard.putNumber("arm voltage", armTalon.getMotorOutputVoltage());
   }
 
   
@@ -119,7 +124,8 @@ public class ArmSubsystem extends Subsystem {
 
   @Override
   public void initDefaultCommand() {
-    // Set the default command for a subsystem here.
+
+     // Set the default command for a subsystem here.
     // setDefaultCommand(new MySpecialCommand());
   }
 }
