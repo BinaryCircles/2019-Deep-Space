@@ -8,6 +8,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.robot.Robot;
 import frc.robot.RobotMap;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
@@ -26,8 +27,13 @@ public class IntakeSubsystem extends Subsystem {
   }
 
   public void spit() {
-    intake_t.set(0.35);
-    intake_b.set(-0.35);
+    if (Robot.m_armsubsystem.getPositionDegrees() < 90) {
+      intake_t.set(0.35);
+      intake_b.set(-0.35);
+    } else {
+      intake_t.set(0.5);
+      intake_b.set(-0.5);
+    }
   }
 
   public void atRest() {

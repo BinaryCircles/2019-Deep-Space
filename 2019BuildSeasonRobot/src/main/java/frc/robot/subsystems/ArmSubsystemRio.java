@@ -67,7 +67,7 @@ public class ArmSubsystemRio extends Subsystem
     armL = new VictorSPX(RobotMap.arm_victor);
     armR.setInverted(true);
     armL.follow(armR);
-    armL.setInverted(true);
+    armL.setInverted(false);
     //currentPos = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
     //currentPos.reset(); 
     startingEncoderPosition = -2;
@@ -90,15 +90,14 @@ public class ArmSubsystemRio extends Subsystem
   }
 
   public void setArmPos(int setpoint) {
- 
       armR.configPeakCurrentLimit(10);
       armR.configContinuousCurrentLimit(10);
       armR.configPeakCurrentDuration(50);
       m_setpoint = setpoint;
       controller.setSetpoint((double) m_setpoint );  
-    
   }   
-    // imagine hackeman//
+  
+  // imagine hackeman//
   public void rawTurnArm(double power) {
     if (rawTurnEnabled) {
       armR.configPeakCurrentLimit(40);
@@ -124,7 +123,7 @@ public void changeRawTurnStatus() {
     } else {
       //armR.set(ControlMode.PercentOutput, pidOutput, DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));
       //armR.set(ControlMode.PercentOutput,  kF_lin);      
-      armR.set(ControlMode.PercentOutput, 0);
+      //armR.set(ControlMode.PercentOutput, 0);
     }
 
     SmartDashboard.putNumber("Encoder Raw Output", getEncoderValue());

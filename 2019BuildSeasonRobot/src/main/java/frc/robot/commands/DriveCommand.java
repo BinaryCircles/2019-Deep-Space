@@ -33,6 +33,11 @@ public class DriveCommand extends Command {
   @Override
   protected void execute() {
     Robot.m_drivesub.enableBoost(Robot.m_oi.contr.getBButton());
+
+    if (Robot.m_oi.contr.getYButtonPressed()) {
+      Robot.m_drivesub.invertDirection();
+    }
+
     //sineMovement += Math.PI / 200; //add pi/400 every time execute is called to simulate sin curve movement (temp)
     curveExecute();
   }
@@ -47,9 +52,16 @@ public class DriveCommand extends Command {
 
   protected void curveExecute() {
     //System.out.println(Robot.m_oi.getTriggerMagnitude());
-    Robot.m_drivesub.curvatureDrive(Robot.m_oi.getTriggerMagnitude(),
-    Robot.m_oi.getXMagnitudeOfLeftSide(), // turnCoefficient inverses turn direction when reversing
-    Robot.m_oi.contr.getXButton());
+    if (!Robot.m_drivesub.inverted) {
+      Robot.m_drivesub.curvatureDrive(Robot.m_oi.getTriggerMagnitude(),
+      Robot.m_oi.getXMagnitudeOfLeftSide() * -1, // turnCoefficient inverses turn direction when reversing
+      Robot.m_oi.contr.getXButton());
+    } else if (Robot.m_drivesub.inverted) {
+      Robot.m_drivesub.curvatureDrive(Robot.m_oi.getTriggerMagnitude(),
+      Robot.m_oi.getXMagnitudeOfLeftSide() * 1, // turnCoefficient inverses turn direction when reversing
+      Robot.m_oi.contr.getXButton());
+    }
+    
 
     // Robot.m_drivesub.curvatureDrive(Math.sin(sineMovement),
     // 0.00, // set to 0 to disable pid, breaking in gearboxes

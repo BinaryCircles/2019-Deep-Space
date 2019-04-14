@@ -47,8 +47,7 @@ public class DriveSubsystem extends Subsystem {
   public boolean boostEnabled = false;
 
   public double sineM = 0;
-  public DriveSubsystem()
-  {
+  public DriveSubsystem() {
     talon_fl.configPeakOutputForward(1);
     talon_fl.configPeakOutputReverse(-1);
     talon_fr.configPeakOutputForward(1);
@@ -84,8 +83,7 @@ public class DriveSubsystem extends Subsystem {
     if (boostEnabled) {
       d_drive.curvatureDrive(xSpeed, zRotation * 0.8, isQuickTurn);
     } else {
-      //changed un-boost speed to 0.3 x input for outreach demo at KIMS
-      d_drive.curvatureDrive(xSpeed * 0.3, zRotation * 0.8, isQuickTurn);
+      d_drive.curvatureDrive(xSpeed * 0.8, zRotation * 0.8, isQuickTurn);
     }
   }
 

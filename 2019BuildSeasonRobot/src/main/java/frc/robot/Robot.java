@@ -117,7 +117,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     
-    m_armsubsystem.resetEncoder();
+    //m_armsubsystem.resetEncoder();
     // m_autonomousCommand = m_chooser.getSelected();
 
     /*
