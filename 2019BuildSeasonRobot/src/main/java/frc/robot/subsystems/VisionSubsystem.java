@@ -13,14 +13,18 @@ import org.opencv.imgproc.Imgproc;
 import edu.wpi.first.vision.VisionRunner;
 import edu.wpi.first.vision.VisionThread;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.livewindow.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.cscore.UsbCamera;
+import edu.wpi.cscore.VideoSink;
+import edu.wpi.cscore.VideoSource;
 import frc.robot.grip.GripPipeline;
 import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.CvSource;
 import org.opencv.core.Mat;
 import frc.robot.Robot;
+import edu.wpi.first.wpilibj.IterativeRobot;
 import frc.robot.commands.VisionCommand;
 
 
@@ -46,28 +50,26 @@ public class VisionSubsystem extends Subsystem {
 
   public VisionSubsystem() {
       
-  UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
-  // cvOutput = CameraServer.getInstance().putVideo("processed video", IMG_WIDTH, IMG_HEIGHT);
-  camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
-  camera.setFPS(25);
-    
-    visionThread = new VisionThread(camera, pipe, pipeline -> {
-      if (!pipeline.filterContoursOutput().isEmpty()) {
-          Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
-          synchronized (imgLock) {
-              centerX = r.x + (r.width / 2);
-              
-          }
-      }
-    });
-    
-  visionThread.setDaemon(true);
-  visionThread.start();
+    UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(0);
+    //UsbCamera camera2 = CameraServer.getInstance().startAutomaticCapture(1);
+    VideoSink server = CameraServer.getInstance().getServer();
+    // cvOutput = CameraServer.getInstance().putVideo("processed video", IMG_WIDTH, IMG_HEIGHT);
+    camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
+    /*camera.setFPS(25);
+    camera2.setFPS(25);
+    camera2.setResolution(IMG_WIDTH, IMG_HEIGHT);*/
+    //visionThread.setDaemon(true);
+    //visionThread.start();
   }
 
   
-  public void startVision() {
+  /*public void startVision() {
+    if(Robot.m_oi.contr.getRawButtonReleased(11)){
     
+
+    
+    }
+
   //   UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
   //   camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
   //   camera.setFPS(25);
@@ -84,7 +86,7 @@ public class VisionSubsystem extends Subsystem {
     
   // visionThread.setDaemon(true);
   // visionThread.start();
-  }
+}*/
 
   public void useSee() {
   

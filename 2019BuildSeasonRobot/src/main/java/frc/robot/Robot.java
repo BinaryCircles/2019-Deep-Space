@@ -7,8 +7,6 @@
 
 package frc.robot;
 
-
-
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -27,6 +25,8 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.GenericHID;
 import frc.robot.commands.*;
 
@@ -38,8 +38,8 @@ import frc.robot.commands.*;
  * project.
  */
 public class Robot extends TimedRobot {
-  public static VisionSubsystem m_vissubsystem = new VisionSubsystem();
-  public static VisionCommand m_viscomm = new VisionCommand();
+  //public static VisionSubsystem m_vissubsystem = new VisionSubsystem();
+  //public static VisionCommand m_viscomm = new VisionCommand();
 
   public static PneumaticsSubsystem m_pnsub = new PneumaticsSubsystem();
   public static PneumaticsCommand m_pncomm = new PneumaticsCommand();
@@ -50,7 +50,8 @@ public class Robot extends TimedRobot {
   public static DriveSubsystem m_drivesub = new DriveSubsystem();
   public static DriveCommand m_drivecomm = new DriveCommand();
 
-  public static ArmSubsystemRio m_armsubsystem = ArmSubsystemRio.getInstance();
+  public static ArmSubsystem m_armsubsystem = new ArmSubsystem();
+  //public static ArmSubsystemRio m_armsubsystem = new ArmSubsystemRio();
   public static ArmCommand m_armcomm = new ArmCommand();
 
  // public static AutoDriveCommand m_autodrivecomm = new AutoDriveCommand();
@@ -66,6 +67,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    UsbCamera cam = CameraServer.getInstance().startAutomaticCapture();
+    cam.setFPS(20);
     m_oi = new OI();
     // m_chooser.setDefaultOption("Default Auto", new AutoDriveCommand());
     // chooser.addOption("My Auto", new MyAutoCommand());
@@ -113,6 +116,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    
+    //m_armsubsystem.resetEncoder();
     // m_autonomousCommand = m_chooser.getSelected();
 
     /*
@@ -126,7 +131,7 @@ public class Robot extends TimedRobot {
     // if (m_autonomousCommand != null) {
     //   m_autonomousCommand.start();
     // }
-    m_armsubsystem.resetEncoder();
+    //m_armsubsystem.zeroEncoder();
   }
 
   /**
@@ -134,8 +139,19 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
+    
     Scheduler.getInstance().run();
-    m_autoturncomm.start();
+    //m_autoturncomm.cancel();
+    m_drivecomm.start();
+    //m_viscomm.start();
+
+    m_intakecomm.start();
+
+    if (m_oi.joystick.getBumperPressed(GenericHID.Hand.kRight)) {
+      m_pncomm.execute();
+    }
+
+    m_armcomm.start();
   }
 
   @Override
@@ -144,41 +160,32 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-    //m_armsubsystem.resetEncoder();
+    //m_armsubsystem.zeroEncoder();
   }
 
   /**
    * This function is called periodically during operator control.
    */
+
   @Override
   public void teleopPeriodic() {
     //m_autoturncomm.cancel();
     Scheduler.getInstance().run();
     m_drivecomm.start();
-    m_viscomm.start();
+    //m_viscomm.start();
 
     m_intakecomm.start();
 
-    if (m_oi.contr.getYButtonPressed()) {
+    if (m_oi.joystick.getBumperPressed(GenericHID.Hand.kRight)) {
       m_pncomm.execute();
-    }
-
-    if (m_oi.contr.getPOV() == 0) {
-      // m_drivesub.invertDirection();
-    }
-
-    if (m_oi.contr.getPOV() == 180) {
-      m_autoturncomm.start();
     }
 
     m_armcomm.start();
     //imagine hakerman
   }
 
-  /**
-   * This function is called periodically during test mode.
-   */
   @Override
   public void testPeriodic() {
+
   }
 }

@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.JoystickBase;
 import frc.robot.Robot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * An example command.  You can replace me with your own command.
@@ -29,13 +30,24 @@ public class IntakeCommand extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    if (Robot.m_oi.joystick.getTop()) {
+    if (Robot.m_oi.getSecondControllerTriggerMagnitude() < -0.3) {
       Robot.m_intakesub.succ();
-    } else if (Robot.m_oi.joystick.getTrigger()) {
+    } else if (Robot.m_oi.getSecondControllerTriggerMagnitude() > 0.3) {
       Robot.m_intakesub.spit();
     } else {
       Robot.m_intakesub.atRest();
     }
+
+    SmartDashboard.putNumber("analog input", Robot.m_oi.getSecondControllerTriggerMagnitude());
+    //Robot.m_intakesub.runIntakeAnalog(Robot.m_oi.getSecondControllerTriggerMagnitude());
+
+    /*if (Robot.m_oi.contr.getAButton()) {
+      Robot.m_intakesub.succ();
+    } else if (Robot.m_oi.contr.getBButton()) {
+      Robot.m_intakesub.spit();
+    } else {
+      Robot.m_intakesub.atRest();
+    } outreach controls*/
   }
 
   // Make this return true when this Command no longer needs to run execute()

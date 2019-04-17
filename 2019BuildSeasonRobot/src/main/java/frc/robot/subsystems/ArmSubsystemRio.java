@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
-
+import frc.robot.commands.ArmCommand;
 import com.ctre.phoenix.*;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -32,70 +32,115 @@ public class ArmSubsystemRio extends Subsystem
   // here. Call these from Commands.
   private SynchronousPIDF controller;
   private static ArmSubsystemRio armSub = new ArmSubsystemRio();
-  private  TalonSRX armR; 
-  private  VictorSPX armL;
+  private TalonSRX armR; 
+  private VictorSPX armL;
   private Encoder currentPos;
-  private  double kP;
-  private  double kI;
-  private  double kD;
+  private double kP;
+  private double kI;
+  private double kD;
   private double m_setpoint;
   private double startingEncoderPosition;
+  private boolean rawTurnEnabled;
+  private double pwr;
   //Linearizing feedforward constant
   private double kF_lin;
   //Default constructor
   public ArmSubsystemRio()
   {
     super("Arm Subsystem");
-    armR  = new TalonSRX(RobotMap.arm_talon);
-    armL = new VictorSPX(RobotMap.arm_victor);
-    kP = 0.002;
+    rawTurnEnabled = false;
+    kF_lin = 0.28;
+    kP = 0.0;
     kI = 0.0;
     kD = 0.0;
-    kF_lin = 0.151;
-    armR.configPeakCurrentLimit(10);
+    controller = new SynchronousPIDF(kP, kI, kD);
+    armR = new TalonSRX(RobotMap.arm_talon);
+    armL = new VictorSPX(RobotMap.arm_victor);
+    armR.configFactoryDefault();
+    armL.configFactoryDefault();
+    pwr = 0;
     armR.enableCurrentLimit(true);
+    armR.configPeakCurrentLimit(20);
+    armR.configPeakCurrentDuration(50);
+    armR.configContinuousCurrentLimit(20);
     armR = new TalonSRX(RobotMap.arm_talon);
     armL = new VictorSPX(RobotMap.arm_victor);
     armR.setInverted(true);
     armL.follow(armR);
-    armL.setInverted(true);
-    currentPos = new Encoder(0, 1, true, Encoder.EncodingType.k4X );
-    currentPos.reset();
-    controller = new SynchronousPIDF(kP, kI, kD, 0);
-    startingEncoderPosition = 118.0;
+    armL.setInverted(false);
+    //currentPos = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
+    //currentPos.reset(); 
+    startingEncoderPosition = -2;
     m_setpoint = 45;
-    controller.setOutputRange(-1, 1);
+    controller.setSetpoint(m_setpoint);
+    armR.setSelectedSensorPosition(0);
   }
+  
   public static ArmSubsystemRio getInstance()
   {
     return armSub;
   }
   @Override
   public void initDefaultCommand() {
+    //setDefaultCommand(new ArmCommand());
   }
   public void resetEncoder()
   {
-    currentPos.reset();
+    //currentPos.reset();
   }
 
   public void setArmPos(int setpoint) {
-    m_setpoint = setpoint;
-    controller.setSetpoint((double) m_setpoint );
-  }
-    // imagine hackeman//
+      armR.configPeakCurrentLimit(10);
+      armR.configContinuousCurrentLimit(10);
+      armR.configPeakCurrentDuration(50);
+      m_setpoint = setpoint;
+      controller.setSetpoint((double) m_setpoint );  
+  }   
+  
+  // imagine hackeman//
   public void rawTurnArm(double power) {
-    armR.set(ControlMode.PercentOutput, power, DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));
+    if (rawTurnEnabled) {
+      armR.configPeakCurrentLimit(40);
+      armR.configPeakCurrentDuration(50);
+      armR.configContinuousCurrentLimit(40);
+      armR.set(ControlMode.PercentOutput, power/2, DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));
+      pwr = (power/2);
+    }
   }
+public void changeRawTurnStatus() {
+  rawTurnEnabled = !rawTurnEnabled;
+}
+
   @Override
   public void periodic()
   {
-    double pidOutput = controller.calculate(/*getPositionDegrees()*/ 47, 20);
-    //armR.set(ControlMode.PercentOutput, pidOutput, DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));
+    double pidOutput = controller.calculate(getPositionDegrees(), 0.02);
+    // System.out.println(pidOutput);
+
+    //armR.set(ControlMode.PercentOutput, pidOutput, DemandType.ArbitraryFeedForward, kF_lin* Math.cos(Math.toRadians(getPositionDegrees())));
+    if (rawTurnEnabled) {
+      //armR.set(ControlMode.PercentOutput, pwr, DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));
+    } else {
+      //armR.set(ControlMode.PercentOutput, pidOutput, DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees())));
+      //armR.set(ControlMode.PercentOutput,  kF_lin);      
+      //armR.set(ControlMode.PercentOutput, 0);
+    }
+
+    SmartDashboard.putNumber("Encoder Raw Output", getEncoderValue());
     SmartDashboard.putNumber("Arm Output", getPositionDegrees());
     SmartDashboard.putNumber("Arm pid Output", pidOutput );
     SmartDashboard.putNumber("Arm setpoint", m_setpoint );
+    SmartDashboard.putNumber("PID Error", controller.getError());
+    SmartDashboard.putNumber("PID Error 2", controller.getError());
   }
+
+  public double getEncoderValue() {
+    //return currentPos.get();
+    return armR.getSelectedSensorPosition();
+  }
+
   public double getPositionDegrees() {
-    return (( (double)currentPos.get() )* 360.0 / (4.0 * 256.0))+ startingEncoderPosition;
+    //return (((double)currentPos.get() )* 360.0 / (4.0 * 256.0)) + startingEncoderPosition;
+    return (((double)armR.getSelectedSensorPosition())* 360.0 / (4.0 *  1024.0)) + startingEncoderPosition;
   }
 }

@@ -57,13 +57,22 @@ public class DriveSubsystem extends Subsystem {
     talon_fl.setInverted(inverted);
     talon_fr.setInverted(inverted);
 
-    talon_fl.configPeakOutputForward(1);
-    talon_fr.configPeakOutputReverse(-1);
-    talon_fr.configPeakOutputForward(1);
-    talon_fl.configPeakOutputReverse(-1);
+  public boolean boostEnabled = false;
 
+  public double sineM = 0;
+  public DriveSubsystem() {
+    talon_fl.configPeakOutputForward(1);
+    talon_fl.configPeakOutputReverse(-1);
+    talon_fr.configPeakOutputForward(1);
+    talon_fr.configPeakOutputReverse(-1);
+    victor_bl.follow(talon_fl);
+    victor_br.follow(talon_fr);
+    d_left.setInverted(inverted);
+    d_right.setInverted(inverted);
     d_drive.setSafetyEnabled(false);
+
   }
+  //drive = new RobotDrive(talon_fl, talon_bl, talon_fr, talon_br);
 
   @Override
   public void initDefaultCommand() {
@@ -79,7 +88,19 @@ public class DriveSubsystem extends Subsystem {
   }
 
   public void curvatureDrive(double xSpeed, double zRotation, boolean isQuickTurn) {
-    d_drive.curvatureDrive(xSpeed, -1 *zRotation, isQuickTurn);
+    if (boostEnabled) {
+      d_drive.curvatureDrive(xSpeed, zRotation * 0.8, isQuickTurn);
+    } else {
+      d_drive.curvatureDrive(xSpeed * 0.8, zRotation * 0.8, isQuickTurn);
+    }
+  }
+
+  public void enableBoost(boolean bPressed) {
+    if (bPressed) {
+      boostEnabled = true;
+    } else {
+      boostEnabled = false;
+    }
   }
 
   public void invertDirection() {
