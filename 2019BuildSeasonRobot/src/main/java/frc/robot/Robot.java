@@ -54,7 +54,7 @@ public class Robot extends TimedRobot {
   //public static ArmSubsystemRio m_armsubsystem = new ArmSubsystemRio();
   public static ArmCommand m_armcomm = new ArmCommand();
 
-  public static AutoDriveCommand m_autodrivecomm = new AutoDriveCommand();
+ // public static AutoDriveCommand m_autodrivecomm = new AutoDriveCommand();
   public static AutoTurnCommandMP m_autoturncomm = new AutoTurnCommandMP(1, .1);
   public static OI m_oi;
 

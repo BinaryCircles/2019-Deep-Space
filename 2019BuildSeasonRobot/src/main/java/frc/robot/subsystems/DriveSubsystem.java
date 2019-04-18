@@ -32,17 +32,30 @@ public class DriveSubsystem extends Subsystem {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
 
-  public WPI_TalonSRX talon_fl = new WPI_TalonSRX(RobotMap.talon_fl);
-  public WPI_VictorSPX victor_bl = new WPI_VictorSPX(RobotMap.victor_bl);
-  SpeedControllerGroup d_left = new SpeedControllerGroup(talon_fl, victor_bl);
+  public WPI_TalonSRX talon_fl;
+  public WPI_VictorSPX victor_bl;
 
-  public WPI_TalonSRX talon_fr = new WPI_TalonSRX(RobotMap.talon_fr);
-  public WPI_VictorSPX victor_br = new WPI_VictorSPX(RobotMap.victor_br);
-  SpeedControllerGroup d_right = new SpeedControllerGroup(talon_fr, victor_br);
+  public WPI_TalonSRX talon_fr;
+  public WPI_VictorSPX victor_br;
 
-  DifferentialDrive d_drive = new DifferentialDrive(d_left, d_right);
-  public AHRS ahrs = new AHRS(SPI.Port.kMXP);
-  public boolean inverted = true;
+  DifferentialDrive d_drive;
+  public AHRS ahrs;
+  public boolean inverted;
+
+  public DriveSubsystem()
+  {
+    super("Drive Subsystem");
+    talon_fl = new WPI_TalonSRX(RobotMap.talon_fl);
+    victor_bl = new WPI_VictorSPX(RobotMap.victor_bl);
+    talon_fr = new WPI_TalonSRX(RobotMap.talon_fr);
+    victor_br = new WPI_VictorSPX(RobotMap.victor_br);
+    d_drive = new DifferentialDrive(talon_fr,talon_fl);
+    inverted = true;
+    new AHRS(SPI.Port.kMXP);
+    victor_bl.follow(talon_fl);
+    victor_br.follow(talon_fr);
+    talon_fl.setInverted(inverted);
+    talon_fr.setInverted(inverted);
 
   public boolean boostEnabled = false;
 
@@ -67,12 +80,7 @@ public class DriveSubsystem extends Subsystem {
     // setDefaultCommand(new MySpecialCommand());
 
     setDefaultCommand(new DriveCommand());
-    // Inverting these speed controller groups lets the xbox joystick
-    // directions match the robot's direction.
-
-    // d_drive.setExpiration(0.75);
-
-    // arbitraryMotor.follow(talon_fl);
+   
   }
   
   public void tankDrive(double leftSpeed, double rightSpeed) {
@@ -97,8 +105,8 @@ public class DriveSubsystem extends Subsystem {
 
   public void invertDirection() {
     inverted = !inverted;
-    d_left.setInverted(inverted);
-    d_right.setInverted(inverted);
+    talon_fl.setInverted(inverted);
+    talon_fr.setInverted(inverted);
   }
  
 }

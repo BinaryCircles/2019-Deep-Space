@@ -63,7 +63,7 @@ public class DriveCommand extends Command {
     }
     
 
-    // Robot.m_drivesub.curvatureDrive(Math.sin(sineMovement),
+    // Robot.m_drivesub.curvaureDrive(Math.sin(sineMovement),
     // 0.00, // set to 0 to disable pid, breaking in gearboxes
     // false);
 
