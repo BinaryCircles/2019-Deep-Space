@@ -131,6 +131,8 @@ public class Robot extends TimedRobot {
     // if (m_autonomousCommand != null) {
     //   m_autonomousCommand.start();
     // }
+
+    m_armsubsystem.resetIntegrator();
     //m_armsubsystem.zeroEncoder();
   }
 

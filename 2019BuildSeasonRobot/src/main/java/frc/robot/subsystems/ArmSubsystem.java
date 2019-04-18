@@ -31,7 +31,7 @@ public class ArmSubsystem extends Subsystem {
 
   // pid constants
   private static double kP, kI, kD;
-  private static double kF_lin;
+  private static double kF_lin, kF_value;
   private static double m_setpoint, pidOutput, startingEncoderPosition, offset;
   
   private boolean rawTurnEnabled;
@@ -53,6 +53,7 @@ public class ArmSubsystem extends Subsystem {
     kD = 0.0006;
     controller = new SynchronousPIDF(kP, kI, kD);
     kF_lin = 0.15; // 0.2
+    kF_value = 0.15;
     startingEncoderPosition = -2;
     offset = -27;
 
@@ -75,7 +76,7 @@ public class ArmSubsystem extends Subsystem {
     armTalon.config_kI(0, kI);
     armTalon.config_kD(0, kD);
     
-    m_setpoint = 6; // 507 encoder ticks = 45 degree
+    m_setpoint = 130; // 507 encoder ticks = 45 degree
     controller.setSetpoint(m_setpoint); // temporary
 
   }
@@ -84,6 +85,20 @@ public class ArmSubsystem extends Subsystem {
   public void resetEncoder() {
     armTalon.setSelectedSensorPosition(0); // -22 encoder ticks = ~-2 degrees
     currentPos.reset(); // rio pid
+  }
+
+  // reset integrator
+  public void resetIntegrator() {
+    controller.resetIntegrator();
+  }
+
+  // toggle feedforward
+  public void toggleFeedforward() {
+    if (kF_lin == kF_value) {
+      kF_lin = 0;
+    } else {
+      kF_lin = kF_value;
+    }
   }
 
   // toggle raw turn on/off
@@ -131,7 +146,7 @@ public class ArmSubsystem extends Subsystem {
     SmartDashboard.putNumber("arm current", armTalon.getOutputCurrent());
     SmartDashboard.putNumber("arm voltage", armTalon.getMotorOutputVoltage());
     SmartDashboard.putNumber("arbitrary feedforward", kF_lin * Math.cos(Math.toRadians(getPositionDegrees() + offset)));
-
+    SmartDashboard.putNumber("arm integral", controller.getIntegral());
   }
 
   // convert encoder ticks to degrees

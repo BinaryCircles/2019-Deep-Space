@@ -196,6 +196,10 @@ public class SynchronousPIDF {
         return m_result;
     }
 
+    public double getIntegral() {
+        return m_totalError;
+    }
+
     /**
      * Set the PID controller to consider the input to be continuous, Rather then using the max and min in as
      * constraints, it considers them to be the same point and automatically calculates the shortest route to the

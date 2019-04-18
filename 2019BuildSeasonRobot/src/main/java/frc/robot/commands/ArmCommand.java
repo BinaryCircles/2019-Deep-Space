@@ -42,7 +42,7 @@ public class ArmCommand extends Command {
     } else if (Robot.m_oi.joystick.getXButtonPressed()) { // rocket cargo forward
       Robot.m_armsubsystem.updateSetpoint(40);
     } else if (Robot.m_oi.joystick.getPOV() == 0) { // starting pos
-      Robot.m_armsubsystem.updateSetpoint(118);
+      Robot.m_armsubsystem.updateSetpoint(130);
     } else if (Robot.m_oi.joystick.getPOV() == 270) { // rocket cargo passthrough
       //Robot.m_armsubsystem.updateSetpoint(150);
     } else if (Robot.m_oi.joystick.getPOV() == 90) { // ship cargo passthrough
@@ -55,6 +55,10 @@ public class ArmCommand extends Command {
 
     if (Robot.m_oi.joystick.getStartButtonPressed()) {
       Robot.m_armsubsystem.resetEncoder();
+    }
+
+    if (Robot.m_oi.joystick.getBackButtonPressed()) {
+      Robot.m_armsubsystem.toggleFeedforward();
     }
 
     Robot.m_armsubsystem.rawTurnArm(Robot.m_oi.getYMagnitudeOfJoystickLeftSide() * -1);
