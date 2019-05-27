@@ -69,7 +69,7 @@ public class OI {
   }
 
   public double getSecondControllerTriggerMagnitude() {
-    return -Math.pow((-joystick.getTriggerAxis(GenericHID.Hand.kRight) + joystick.getTriggerAxis(GenericHID.Hand.kLeft)), 3);
+    return Math.pow((-joystick.getTriggerAxis(GenericHID.Hand.kRight) + joystick.getTriggerAxis(GenericHID.Hand.kLeft)), 3);
   }
 
 

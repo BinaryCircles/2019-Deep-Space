@@ -22,17 +22,17 @@ public class IntakeSubsystem extends Subsystem {
   public WPI_VictorSPX intake_t = new WPI_VictorSPX(RobotMap.intake_t); // top row
   public WPI_VictorSPX intake_b = new WPI_VictorSPX(RobotMap.intake_b); // bottom row
   public void succ() {
-    intake_t.set(-0.75);
-    intake_b.set(0.75);
+    intake_t.set(1);
+    intake_b.set(-1);
   }
 
   public void spit() {
     if (Robot.m_armsubsystem.getPositionDegrees() < 90) {
-      intake_t.set(0.35);
-      intake_b.set(-0.35);
+      intake_t.set(-0.35);
+      intake_b.set(0.35);
     } else {
-      intake_t.set(0.5);
-      intake_b.set(-0.5);
+      intake_t.set(-0.6);
+      intake_b.set(0.6);
     }
   }
 

@@ -36,21 +36,19 @@ public class ArmCommand extends Command {
     }
 
     if (Robot.m_oi.joystick.getAButtonPressed()) { // hatch forward
-      Robot.m_armsubsystem.updateSetpoint(8);
+      Robot.m_armsubsystem.updateSetpoint(2);
     } else if (Robot.m_oi.joystick.getBButtonPressed()) { // ship cargo forward
       Robot.m_armsubsystem.updateSetpoint(60);
     } else if (Robot.m_oi.joystick.getXButtonPressed()) { // rocket cargo forward
       Robot.m_armsubsystem.updateSetpoint(40);
     } else if (Robot.m_oi.joystick.getPOV() == 0) { // starting pos
-      Robot.m_armsubsystem.updateSetpoint(130);
+      Robot.m_armsubsystem.updateSetpoint(125);
     } else if (Robot.m_oi.joystick.getPOV() == 270) { // rocket cargo passthrough
       //Robot.m_armsubsystem.updateSetpoint(150);
     } else if (Robot.m_oi.joystick.getPOV() == 90) { // ship cargo passthrough
       Robot.m_armsubsystem.updateSetpoint(130);
     } else if (Robot.m_oi.joystick.getPOV() == 180) { // hatch passthrough
       //Robot.m_armsubsystem.updateSetpoint(155);
-    } else if (Robot.m_oi.joystick.getYButtonPressed()) {
-      Robot.m_armsubsystem.updateSetpoint(4);
     }
 
     if (Robot.m_oi.joystick.getStartButtonPressed()) {

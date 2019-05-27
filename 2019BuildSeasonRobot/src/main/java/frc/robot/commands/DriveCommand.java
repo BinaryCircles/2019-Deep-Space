@@ -38,6 +38,9 @@ public class DriveCommand extends Command {
       Robot.m_drivesub.invertDirection();
     }
 
+    //SmartDashboard.putNumber("drive 1 current", Robot.m_drivesub.talon_fl.getOutputCurrent());
+    //SmartDashboard.putNumber("drive 2 current", Robot.m_drivesub.talon_fr.getOutputCurrent());
+
     //sineMovement += Math.PI / 200; //add pi/400 every time execute is called to simulate sin curve movement (temp)
     curveExecute();
   }

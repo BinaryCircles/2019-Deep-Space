@@ -49,29 +49,32 @@ public class DriveSubsystem extends Subsystem {
     victor_bl = new WPI_VictorSPX(RobotMap.victor_bl);
     talon_fr = new WPI_TalonSRX(RobotMap.talon_fr);
     victor_br = new WPI_VictorSPX(RobotMap.victor_br);
-    d_drive = new DifferentialDrive(talon_fr,talon_fl);
-    inverted = true;
+    d_drive = new DifferentialDrive(talon_fr, talon_fl);
+    inverted = false;
     new AHRS(SPI.Port.kMXP);
     victor_bl.follow(talon_fl);
     victor_br.follow(talon_fr);
     talon_fl.setInverted(inverted);
     talon_fr.setInverted(inverted);
+    victor_bl.setInverted(inverted);
+    victor_br.setInverted(inverted);
+    talon_fl.configPeakCurrentLimit(80);
+    talon_fr.configPeakCurrentLimit(80);
+    talon_fl.configPeakCurrentDuration(50);
+    talon_fr.configPeakCurrentDuration(50);
+    talon_fl.enableCurrentLimit(true);
+    talon_fr.enableCurrentLimit(true);
+
+    talon_fl.setSafetyEnabled(false);
+    talon_fr.setSafetyEnabled(false);
+    victor_bl.setSafetyEnabled(false);
+    victor_br.setSafetyEnabled(false);
+  }
 
   public boolean boostEnabled = false;
 
   public double sineM = 0;
-  public DriveSubsystem() {
-    talon_fl.configPeakOutputForward(1);
-    talon_fl.configPeakOutputReverse(-1);
-    talon_fr.configPeakOutputForward(1);
-    talon_fr.configPeakOutputReverse(-1);
-    victor_bl.follow(talon_fl);
-    victor_br.follow(talon_fr);
-    d_left.setInverted(inverted);
-    d_right.setInverted(inverted);
-    d_drive.setSafetyEnabled(false);
-
-  }
+  
   //drive = new RobotDrive(talon_fl, talon_bl, talon_fr, talon_br);
 
   @Override
@@ -107,6 +110,8 @@ public class DriveSubsystem extends Subsystem {
     inverted = !inverted;
     talon_fl.setInverted(inverted);
     talon_fr.setInverted(inverted);
+    victor_bl.setInverted(inverted);
+    victor_br.setInverted(inverted);
   }
  
 }

@@ -15,6 +15,8 @@ import frc.robot.RobotMap;
 import frc.robot.commands.ArmCommand;
 
 import com.ctre.phoenix.*;
+
+import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -51,21 +53,21 @@ public class ArmSubsystem extends Subsystem {
     rawTurnEnabled = false;
 
     // initialize controller/constants
-    kP = 0.018;
-    kI = 0.007;
-    kD = 0.0006;
+    kP = 0.027;
+    kI = 0.0005;
+    kD = 0.00001;
     controller = new SynchronousPIDF(kP, kI, kD);
-    kF_lin = 0.15; // 0.2
-    kF_value = 0.15;
-    startingEncoderPosition = -2;
-    offset = -27;
+    kF_lin = 0.1065; // 0.2
+    kF_value = 0;
+    startingEncoderPosition = 131;
+    offset = 4;
 
     // configure motor controllers
     //armTalon.configFactoryDefault();
     //armVictor.configFactoryDefault();
     armTalon.configNeutralDeadband(0.0001);
     armTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
-    armTalon.setInverted(true);
+    armTalon.setInverted(false);
     armVictor.setInverted(false);
     armTalon.setSensorPhase(true);
     armTalon.enableCurrentLimit(true);
@@ -79,7 +81,7 @@ public class ArmSubsystem extends Subsystem {
     armTalon.config_kI(0, kI);
     armTalon.config_kD(0, kD);
     
-    m_setpoint = 130; // 507 encoder ticks = 45 degree
+    m_setpoint = 120; // 507 encoder ticks = 45 degree
     controller.setSetpoint(m_setpoint); // temporary
 
   }
@@ -97,11 +99,7 @@ public class ArmSubsystem extends Subsystem {
 
   // toggle feedforward
   public void toggleFeedforward() {
-    if (kF_lin == kF_value) {
-      kF_lin = 0;
-    } else {
-      kF_lin = kF_value;
-    }
+    
   }
 
   // toggle raw turn on/off
@@ -118,17 +116,16 @@ public class ArmSubsystem extends Subsystem {
   // set pid setpoint
   public void updatePower() {
     if (!rawTurnEnabled) {
-      //armTalon.set(ControlMode.Position, m_setpoint, DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees()))); // talon pid
       //armTalon.set(ControlMode.PercentOutput, kF_lin); // stall tuning script
       pidOutput = controller.calculate(getPositionDegrees(), 0.02); // synchronous pid calculate output
-      armTalon.set(ControlMode.PercentOutput, pidOutput, DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees() + offset)));
+      armTalon.set(ControlMode.PercentOutput, pidOutput, DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees() - offset)));
     }
   }
 
   // move arm according to a user-set power
   public void rawTurnArm(double power) {
     if (rawTurnEnabled) {
-      armTalon.set(ControlMode.PercentOutput, power, DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees() + offset)));
+      armTalon.set(ControlMode.PercentOutput, power, DemandType.ArbitraryFeedForward, kF_lin * Math.cos(Math.toRadians(getPositionDegrees() - offset)));
     }
   }
 
